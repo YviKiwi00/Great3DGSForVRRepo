@@ -56,6 +56,7 @@ if __name__ == '__main__':
         print("[INFO] Tracking-Anything-with-DEVA installed.")
         os.chdir("../../../")
 
+    # Install LaMa
     if args.no_lama:
         print("[INFO] Skipping installation of LaMa.")
     else:
