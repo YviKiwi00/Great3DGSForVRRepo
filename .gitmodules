@@ -1,0 +1,6 @@
+[submodule "frosting"]
+	path = frosting
+	url = https://github.com/Anttwo/Frosting.git
+[submodule "grouping"]
+	path = grouping
+	url = https://github.com/lkeab/gaussian-grouping.git
