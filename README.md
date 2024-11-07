@@ -5,7 +5,12 @@
 ## Overview
 
 ## Installation
-Die Installation hier wird nur für Ubuntu-basierte Systeme beschrieben. Betriebssysteme wie Windows sind nicht getestet und die Funktionalität kann nicht garantiert werden. 
+Die Installation hier wird nur für Ubuntu-basierte Systeme beschrieben. Betriebssysteme wie Windows sind nicht getestet und die Funktionalität kann nicht garantiert werden.
+
+Erst muss das Repo und seine Submodules geklont werden:
+```shell
+git clone https://github.com/YviKiwi00/Great3DGSForVRRepo.git --recursive
+```
 
 ### 1. Abhängigkeiten
 Folgende Abhängigkeiten werden vor der Installation dieses Repos benötigt:
