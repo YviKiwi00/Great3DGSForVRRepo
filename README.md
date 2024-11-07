@@ -83,11 +83,11 @@ Die Installation aller Abhängigkeiten und Module für dieses Repo wurde in eine
 
 Folgende Argumente werden für das Installationsskript akzeptiert:
 
-| Parameter              |                                                                                                                                                                               Beschreibung |
-|:-----------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
-| `--no_nvdiffrast`      |                                     Keine Installation von [Nvdiffrast](https://nvlabs.github.io/nvdiffrast/), einem optionalem Repo für Occlusion Culling und schnellere Mesh-Extraction. |
-| `--no_deva`            | Keine Installation von [DEVA](https://github.com/hkchengrex/Tracking-Anything-with-DEVA), einem optionalem Repo für die Vorbereitung von Masken und Segmentierung auf eigenen Datensätzen. |
-| `--no_lama`            |                                                                      Keine Installation von [LaMa](https://github.com/advimman/lama), einem optionalem Repo für das Inpainting von Szenen. |
+| Parameter                        |                                                                                                                                                                               Beschreibung |
+|:---------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+| `--no_nvdiffrast`                |                                     Keine Installation von [Nvdiffrast](https://nvlabs.github.io/nvdiffrast/), einem optionalem Repo für Occlusion Culling und schnellere Mesh-Extraction. |
+| `--no_deva`                      | Keine Installation von [DEVA](https://github.com/hkchengrex/Tracking-Anything-with-DEVA), einem optionalem Repo für die Vorbereitung von Masken und Segmentierung auf eigenen Datensätzen. |
+| `--no_lama`                      |                                                                      Keine Installation von [LaMa](https://github.com/advimman/lama), einem optionalem Repo für das Inpainting von Szenen. |
 
 ```shell
 python install.py
