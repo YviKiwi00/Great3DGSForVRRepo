@@ -66,4 +66,8 @@ if __name__ == '__main__':
         print("[INFO] LaMa installed.")
         os.chdir("../../")
 
+    print("[INFO] Downgrading Setuptools...")
+    os.system("conda run -n Great3DGSForVR pip install setuptools==59.8.0")
+    print("[INFO] Setuptools downgraded to 59.8.0.")
+
     print("[INFO] Great3DGSForVR installation complete.")
