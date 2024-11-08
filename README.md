@@ -16,6 +16,8 @@ git clone https://github.com/YviKiwi00/Great3DGSForVRRepo.git --recursive
 Folgende Abhängigkeiten werden vor der Installation dieses Repos benötigt:
 
 - Conda
+- Colmap
+- ImageMagick 7 (optional)
 - C++ Compiler für PyTorch
 - CUDA Toolkit 11.8
 
