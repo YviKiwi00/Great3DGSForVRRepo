@@ -118,7 +118,7 @@ data
 
 Auf diesen in `data` enthaltenen Datensätzen kann folgendes Skript für die Structure-from-Motion Konvertierung ausgeführt werden:
 ```shell
-python convert.py -s <dataset> [--resize]
+python convert.py -d <dataset> [--resize]
 ```
 
 Das optionale Argument `--resize` kann, vorausgesetzt ImageMagick 7 ist als Abhängigkeit installiert, genutzt werden, um vier verschiedene Skalierungsstufen der Bilder zu generieren. Dies kann nützlich sein, falls der Grafikkartenspeicher nicht sehr groß ist und z.B. das Generieren von Segmentierungsmasken auf kleiner skalierten Bildern erfolgen muss.
