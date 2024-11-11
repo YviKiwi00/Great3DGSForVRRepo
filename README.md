@@ -101,3 +101,32 @@ Im Root-Verzeichnis können folgende Befehle für die Installation des Environme
 python install.py
 conda activate Great3DGSForVR
 ```
+
+## Training
+
+### 1. Structure from Motion
+Als Basis jedes Trainings wird die Punktwolke und die Kameraparameter einer jeden Szene extrahiert. Es wird COLMAP als Structure-from-Motion (SfM) Pipeline benutzt.
+Am besten wird ein Ordner `data` angelegt, in dem alle Datensätze enthalten sind, auf dem das weitere Training durchgeführt wird.
+```shell
+data
+|---<dataset>
+    |---input
+        |---<image 0>
+        |---<image 1>
+        |---...
+```
+
+Auf diesen in `data` enthaltenen Datensätzen kann folgendes Skript für die Structure-from-Motion Konvertierung ausgeführt werden:
+```shell
+python convert.py -s <dataset> [--resize]
+```
+
+Das optionale Argument `--resize` kann, vorausgesetzt ImageMagick 7 ist als Abhängigkeit installiert, genutzt werden, um vier verschiedene Skalierungsstufen der Bilder zu generieren. Dies kann nützlich sein, falls der Grafikkartenspeicher nicht sehr groß ist und z.B. das Generieren von Segmentierungsmasken auf kleiner skalierten Bildern erfolgen muss.
+Es werden folgende Ordner erstellt:
+
+| Ordner     |                                                                                                                                     Beschreibung |
+|:-----------|-------------------------------------------------------------------------------------------------------------------------------------------------:|
+| `images`   |                                               Wird standardmäßig generiert und enthält die Input-Bilder aus dem Ordner `input` in Originalgröße. |
+| `images_2` |  Wird mit gesetztem `--resize` Argument generiert und enthält die Input-Bilder aus dem Ordner `input` auf die Hälfte der Originalgröße skaliert. |
+| `images_4` | Wird mit gesetztem `--resize` Argument generiert und enthält die Input-Bilder aus dem Ordner `input` auf ein Viertel der Originalgröße skaliert. |
+| `images_8` |  Wird mit gesetztem `--resize` Argument generiert und enthält die Input-Bilder aus dem Ordner `input` auf ein Achtel der Originalgröße skaliert. |
