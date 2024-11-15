@@ -6,6 +6,10 @@ parser.add_argument("--dataset_name", "-d", required=True, type=str)
 parser.add_argument("--image_scale", "-s", required=True, type=str, help="Can be 1, 2, 4 or 8")
 args = parser.parse_args()
 
-print(f"Preparing Labels for Dataset {args.dataset_name}...")
-os.system(f"bash grouping/script/prepare_pseudo_label.sh {args.dataset_name} {args.image_scale}")
-print("Labels for Gaussian Splatting training prepared.")
+# print(f"Preparing Labels for Dataset {args.dataset_name}...")
+# os.system(f"bash grouping/script/prepare_pseudo_label.sh {args.dataset_name} {args.image_scale}")
+# print("Labels for Gaussian Splatting training prepared.")
+
+print(f"Training 3D Gaussian Grouping Model for Dataset {args.dataset_name}...")
+os.system(f"bash grouping/script/train.sh {args.dataset_name} {args.image_scale}")
+print("Training of 3D Gaussian Grouping model finished.")
