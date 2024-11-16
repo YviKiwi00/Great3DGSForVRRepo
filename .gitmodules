@@ -5,4 +5,5 @@
 [submodule "grouping"]
 	path = grouping
 	url = https://github.com/YviKiwi00/gaussian-grouping.git
+	branch = main
 	ignore = dirty
