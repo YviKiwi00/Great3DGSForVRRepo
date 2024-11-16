@@ -19,13 +19,14 @@ if __name__ == '__main__':
     os.chdir("grouping/submodules/diff-gaussian-rasterization/")
     os.system("conda run -n Great3DGSForVR pip install -e .")
     print("[INFO] 3D Gaussian Splatting rasterizer installed.")
+    os.chdir("../../../")
     
     # Install simple-knn
     print("[INFO] Installing simple-knn (Grouping)...")
-    os.chdir("../simple-knn/")
+    os.chdir("frosting/gaussian_splatting/submodules/simple-knn/")
     os.system("conda run -n Great3DGSForVR pip install -e .")
     print("[INFO] simple-knn installed.")
-    os.chdir("../../../")
+    os.chdir("../../../../")
     
     # Install Nvdiffrast
     if args.no_nvdiffrast:
