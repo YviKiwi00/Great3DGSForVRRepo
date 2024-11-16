@@ -15,17 +15,17 @@ if __name__ == '__main__':
     print("[INFO] Conda environment created.")
     
     # Install 3D Gaussian Splatting rasterizer
-    print("[INFO] Installing the 3D Gaussian Splatting rasterizer...")
-    os.chdir("frosting/gaussian_splatting/submodules/diff-gaussian-rasterization/")
+    print("[INFO] Installing the 3D Gaussian Splatting rasterizer (Grouping)...")
+    os.chdir("grouping/submodules/diff-gaussian-rasterization/")
     os.system("conda run -n Great3DGSForVR pip install -e .")
     print("[INFO] 3D Gaussian Splatting rasterizer installed.")
     
     # Install simple-knn
-    print("[INFO] Installing simple-knn...")
+    print("[INFO] Installing simple-knn (Grouping)...")
     os.chdir("../simple-knn/")
     os.system("conda run -n Great3DGSForVR pip install -e .")
     print("[INFO] simple-knn installed.")
-    os.chdir("../../../../")
+    os.chdir("../../../")
     
     # Install Nvdiffrast
     if args.no_nvdiffrast:
