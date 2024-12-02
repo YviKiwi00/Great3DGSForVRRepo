@@ -3,4 +3,6 @@
 	url = https://github.com/Anttwo/Frosting.git
 [submodule "grouping"]
 	path = grouping
-	url = https://github.com/lkeab/gaussian-grouping.git
+	url = https://github.com/YviKiwi00/gaussian-grouping.git
+	branch = main
+	ignore = dirty
