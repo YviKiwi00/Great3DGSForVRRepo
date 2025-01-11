@@ -14,6 +14,9 @@ import os
 import logging
 from argparse import ArgumentParser
 import shutil
+from datetime import datetime
+
+startTime = datetime.now()
 
 # This Python script is based on the shell converter script provided in the MipNerF 360 repository.
 parser = ArgumentParser("Colmap converter")
@@ -125,4 +128,4 @@ if(args.resize):
             logging.error(f"12.5% resize failed with code {exit_code}. Exiting.")
             exit(exit_code)
 
-print("Done.")
+print(f"Done. Took {print(datetime.now() - startTime)}.")

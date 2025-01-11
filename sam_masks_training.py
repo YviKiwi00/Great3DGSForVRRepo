@@ -1,5 +1,8 @@
 import os
 import argparse
+from datetime import datetime
+
+startTime = datetime.now()
 
 parser = argparse.ArgumentParser(description='Setup the environment')
 parser.add_argument("--dataset_name", "-d", required=True, type=str)
@@ -17,3 +20,5 @@ print("Labels for Gaussian Splatting training prepared.")
 print(f"Training 3D Gaussian Grouping Model for Dataset {args.dataset_name}...")
 os.system(f"bash grouping/script/train.sh {args.dataset_name} {args.image_scale}")
 print("Training of 3D Gaussian Grouping model finished.")
+
+print(f"Done. Took {print(datetime.now() - startTime)}.")
