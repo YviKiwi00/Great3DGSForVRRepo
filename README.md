@@ -13,6 +13,9 @@ git clone https://github.com/YviKiwi00/Great3DGSForVRRepo.git --recursive
 ```
 
 ### 1. Abhängigkeiten
+<details>
+<summary><span style="font-weight: bold;">Hier klicken zum Aufklappen.</span></summary>
+
 Folgende Abhängigkeiten werden vor der Installation dieses Repos benötigt:
 
 - Conda
@@ -84,8 +87,12 @@ Auch die Installation der passenden CUDA-Toolkit Version kann als Einzelversion 
     ```
 
 </details>
+</details>
 
 ### 2. Installation des Conda-Environments und aller anderen Module
+<details>
+<summary><span style="font-weight: bold;">Hier klicken zum Aufklappen.</span></summary>
+
 Die Installation aller Abhängigkeiten und Module für dieses Repo wurde in einem einzigen Installationsskript gebündelt. Wie oben beschrieben wird für die Installation CUDA 11.8 und GCC und G++ 11 benötigt.
 
 Folgende Argumente werden für das Installationsskript akzeptiert:
@@ -101,12 +108,13 @@ Im Root-Verzeichnis können folgende Befehle für die Installation des Environme
 python install.py
 conda activate Great3DGSForVR
 ```
+</details>
 
 ## Training
 
 ### 1. Structure from Motion
 Als Basis jedes Trainings wird die Punktwolke und die Kameraparameter einer jeden Szene extrahiert. Es wird COLMAP als Structure-from-Motion (SfM) Pipeline benutzt.
-Am besten wird ein Ordner `data` angelegt, in dem alle Datensätze enthalten sind, auf dem das weitere Training durchgeführt wird.
+Es muss ein Ordner `data` angelegt werden, in dem alle Datensätze enthalten sind, auf dem das weitere Training durchgeführt wird.
 ```shell
 data
 |---<dataset>
@@ -130,3 +138,16 @@ Es werden folgende Ordner erstellt:
 | `images_2` |  Wird mit gesetztem `--resize` Argument generiert und enthält die Input-Bilder aus dem Ordner `input` auf die Hälfte der Originalgröße skaliert. |
 | `images_4` | Wird mit gesetztem `--resize` Argument generiert und enthält die Input-Bilder aus dem Ordner `input` auf ein Viertel der Originalgröße skaliert. |
 | `images_8` |  Wird mit gesetztem `--resize` Argument generiert und enthält die Input-Bilder aus dem Ordner `input` auf ein Achtel der Originalgröße skaliert. |
+
+### 2. SAM-Labels vorbereiten
+Für die Vorbereitung von Segment-Anything-Masks auf dem eigenen Datensatz muss das DEVA python environment installiert worden sein. Standardmäßig wird dies mit dem `install.py` Skript mitinstalliert, solange `--no_deva` nicht gesetzt wurde. Siehe dazu oben den Abschnitt _Installation_.
+Ist DEVA installiert, kann folgendes Skript ausgeführt werden:
+```shell
+python sam_masks_training.py -d <dataset> -s <1 | 2 | 4 | 8> [-p "text.prompt"]
+```
+
+| Parameter              |                                                                                                                                                                                                                             Beschreibung |
+|:-----------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+| `--dataset_name`, `-d` |                                                                                                                                        Gibt den Datensatz-Namen an auf dem trainiert werden soll und der im Ordner `data` vorhanden ist. |
+| `--image_scale`, `-s`  | Gibt die Bild-Skalierung an, auf der trainiert werden soll. Wurde während des COLMAP-Trainings das Argument `--resize` verwendet, so können hier die Argumente 1, 2, 4, oder 8 verwendet werden. Ansonsten muss eine 1 angegeben werden. |
+| `--prompt`, `-p`       |                          [Optional] Ein Textprompt mit Objekten, die segmentiert werden sollen. Alle Objekte werden mit Punkt voneinander getrennt. Sollte der Prompt nicht gesetzt sein, wird die automatische Segmentierung angewandt. |

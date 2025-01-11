@@ -15,8 +15,6 @@ import logging
 from argparse import ArgumentParser
 import shutil
 
-# from frosting.gaussian_splatting.full_eval import source
-
 # This Python script is based on the shell converter script provided in the MipNerF 360 repository.
 parser = ArgumentParser("Colmap converter")
 parser.add_argument("--no_gpu", action='store_true')
