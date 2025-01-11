@@ -128,4 +128,4 @@ if(args.resize):
             logging.error(f"12.5% resize failed with code {exit_code}. Exiting.")
             exit(exit_code)
 
-print(f"Done. Took {print(datetime.now() - startTime)}.")
+print(f"Done. Took {(datetime.now() - startTime)}.")

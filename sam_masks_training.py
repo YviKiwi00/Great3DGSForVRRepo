@@ -21,4 +21,4 @@ print(f"Training 3D Gaussian Grouping Model for Dataset {args.dataset_name}...")
 os.system(f"bash grouping/script/train.sh {args.dataset_name} {args.image_scale}")
 print("Training of 3D Gaussian Grouping model finished.")
 
-print(f"Done. Took {print(datetime.now() - startTime)}.")
+print(f"Done. Took {(datetime.now() - startTime)}.")
