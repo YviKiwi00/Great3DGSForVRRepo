@@ -14,6 +14,7 @@ import os
 import logging
 from argparse import ArgumentParser
 import shutil
+import torch
 from datetime import datetime
 
 startTime = datetime.now()
@@ -31,6 +32,11 @@ args = parser.parse_args()
 colmap_command = '"{}"'.format(args.colmap_executable) if len(args.colmap_executable) > 0 else "colmap"
 magick_command = '"{}"'.format(args.magick_executable) if len(args.magick_executable) > 0 else "magick"
 use_gpu = 1 if not args.no_gpu else 0
+
+print(torch.cuda.is_available())
+print(torch.cuda.device_count())
+print(torch.cuda.current_device())
+print(torch.cuda.get_device_name(torch.cuda.current_device()))
 
 absolute_file_path = os.path.dirname(os.path.abspath(__file__))
 full_source_path = str(os.path.join(absolute_file_path, 'data', args.dataset_name))
