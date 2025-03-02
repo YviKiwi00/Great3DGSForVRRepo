@@ -25,6 +25,17 @@ def save_jobs(jobs):
     with open(JOBS_FILE, 'w') as f:
         json.dump(jobs, f, indent=2)
 
+def get_all_jobs():
+    jobs = load_jobs()
+    return [
+        {
+            "id": job_id,
+            "project_name": data["project_name"],
+            "status": data["status"]
+        }
+        for job_id, data in jobs.items()
+    ]
+
 async def start_new_job(project_name: str, files: List[UploadFile]) -> str:
     job_id = str(uuid.uuid4())
     project_folder = os.path.join(UPLOAD_DIR, f"{project_name}_{job_id}")
