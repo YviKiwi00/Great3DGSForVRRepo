@@ -26,9 +26,6 @@ Folgende Abhängigkeiten werden vor der Installation dieses Repos benötigt:
 
 Dabei ist wichtig, das der C++ Compiler und das CUDA SDK kompatibel sind. Im Folgenden wird die Installation beider Abhängigkeiten für dieses Repo beschrieben.
 
-<details>
-<summary><span style="font-weight: bold;">Hier klicken für Installationsanleitung.</span></summary>
-
 #### 1.1 C++ Compiler
 Die Installation eines C++ Compilers kann einzeln oder neben anderen C++ Versionen durchgeführt werden. Laut der [CUDA-Dokumentation](https://docs.nvidia.com/cuda/archive/11.8.0/cuda-installation-guide-linux/index.html) von Nvidia ist GCC und G++ Version 11 kompatibel mit CUDA Toolkit 11.8. Sowohl g++ als auch gcc müssen beide die gleiche Version haben, um Fehler zu vermeiden.
 
@@ -87,7 +84,6 @@ Auch die Installation der passenden CUDA-Toolkit Version kann als Einzelversion 
     ```
 
 </details>
-</details>
 
 ### 2. Installation des Conda-Environments und aller anderen Module
 <details>
@@ -109,45 +105,3 @@ python install.py
 conda activate Great3DGSForVR
 ```
 </details>
-
-## Training
-
-### 1. Structure from Motion
-Als Basis jedes Trainings wird die Punktwolke und die Kameraparameter einer jeden Szene extrahiert. Es wird COLMAP als Structure-from-Motion (SfM) Pipeline benutzt.
-Es muss ein Ordner `data` angelegt werden, in dem alle Datensätze enthalten sind, auf dem das weitere Training durchgeführt wird.
-```shell
-data
-|---<dataset>
-    |---input
-        |---<image 0>
-        |---<image 1>
-        |---...
-```
-
-Auf diesen in `data` enthaltenen Datensätzen kann folgendes Skript für die Structure-from-Motion Konvertierung ausgeführt werden:
-```shell
-python convert.py -d <dataset> [--resize]
-```
-
-Das optionale Argument `--resize` kann, vorausgesetzt ImageMagick 7 ist als Abhängigkeit installiert, genutzt werden, um vier verschiedene Skalierungsstufen der Bilder zu generieren. Dies kann nützlich sein, falls der Grafikkartenspeicher nicht sehr groß ist und z.B. das Generieren von Segmentierungsmasken auf kleiner skalierten Bildern erfolgen muss.
-Es werden folgende Ordner erstellt:
-
-| Ordner     |                                                                                                                                     Beschreibung |
-|:-----------|-------------------------------------------------------------------------------------------------------------------------------------------------:|
-| `images`   |                                               Wird standardmäßig generiert und enthält die Input-Bilder aus dem Ordner `input` in Originalgröße. |
-| `images_2` |  Wird mit gesetztem `--resize` Argument generiert und enthält die Input-Bilder aus dem Ordner `input` auf die Hälfte der Originalgröße skaliert. |
-| `images_4` | Wird mit gesetztem `--resize` Argument generiert und enthält die Input-Bilder aus dem Ordner `input` auf ein Viertel der Originalgröße skaliert. |
-| `images_8` |  Wird mit gesetztem `--resize` Argument generiert und enthält die Input-Bilder aus dem Ordner `input` auf ein Achtel der Originalgröße skaliert. |
-
-### 2. SAM-Labels vorbereiten
-Für die Vorbereitung von Segment-Anything-Masks auf dem eigenen Datensatz muss das DEVA python environment installiert worden sein. Standardmäßig wird dies mit dem `install.py` Skript mitinstalliert, solange `--no_deva` nicht gesetzt wurde. Siehe dazu oben den Abschnitt _Installation_.
-Ist DEVA installiert, kann folgendes Skript ausgeführt werden:
-```shell
-python sam_masks_training.py -d <dataset> -s <1 | 2 | 4 | 8> [-p "text.prompt"]
-```
-
-| Parameter              |                                                                                                                                                                                                                             Beschreibung |
-|:-----------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
-| `--dataset_name`, `-d` |                                                                                                                                        Gibt den Datensatz-Namen an auf dem trainiert werden soll und der im Ordner `data` vorhanden ist. |
-| `--image_scale`, `-s`  | Gibt die Bild-Skalierung an, auf der trainiert werden soll. Wurde während des COLMAP-Trainings das Argument `--resize` verwendet, so können hier die Argumente 1, 2, 4, oder 8 verwendet werden. Ansonsten muss eine 1 angegeben werden. |
-| `--prompt`, `-p`       |                          [Optional] Ein Textprompt mit Objekten, die segmentiert werden sollen. Alle Objekte werden mit Punkt voneinander getrennt. Sollte der Prompt nicht gesetzt sein, wird die automatische Segmentierung angewandt. |

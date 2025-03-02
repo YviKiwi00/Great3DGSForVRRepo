@@ -1,9 +1,0 @@
-[submodule "frosting"]
-	path = frosting
-	url = https://github.com/Anttwo/Frosting.git
-	ignore = dirty
-[submodule "grouping"]
-	path = grouping
-	url = https://github.com/YviKiwi00/gaussian-grouping.git
-	branch = main
-	ignore = dirty
