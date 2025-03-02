@@ -63,7 +63,14 @@ function showPreviews(previews) {
 }
 
 async function confirmSegmentation() {
-    alert("Hier käme später der Call für 'confirmSegmentation'!");
-}
+    const response = await fetch(`/jobs/${jobId}/confirmSegmentation`, {method: 'POST'});
+    const result = await response.json();
 
-loadPromptImage();
+    if (result.status === "ok") {
+        alert("Segmentierung bestätigt!");
+        document.getElementById('confirmButton').style.display = 'none';
+        document.getElementById('previewContainer').innerHTML = '';
+    } else {
+        alert("Fehler bei der Bestätigung.");
+    }
+}

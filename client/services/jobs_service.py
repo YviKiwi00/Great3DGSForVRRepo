@@ -31,3 +31,8 @@ def send_prompt_to_server(job_id, point):
     if response.status_code != 200:
         raise Exception(f"Failed to send segmentation prompt: {response.text}")
     return response.json()
+
+def confirm_segmentation_for_job(job_id):
+    response = requests.post(f"{API_BASE}/jobs/{job_id}/confirmSegmentation")
+    if response.status_code != 200:
+        raise Exception(f"Failed to confirm segmentation: {response.text}")

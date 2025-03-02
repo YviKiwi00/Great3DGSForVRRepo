@@ -78,7 +78,16 @@ def get_prompt_image(job_id: str):
 def handle_segmentation_prompt(job_id: str, point: dict):
     x, y = point['x'], point['y']
 
-    # Hier später echte Segmentierung (aktuell Dummy)
+    jobs = load_jobs()
+    job = jobs.get(job_id)
+
+    if not job:
+        raise Exception(f"Job {job_id} not found")
+
+    job["latest_prompt"] = {"x": x, "y": y}
+    save_jobs(jobs)
+
+    # TODO Segmentation Preview
 
     preview_paths = [
         "static/dummy1.jpg",
@@ -92,6 +101,29 @@ def handle_segmentation_prompt(job_id: str, point: dict):
 def encode_image_as_base64(filepath):
     with open(filepath, "rb") as f:
         return base64.b64encode(f.read()).decode('utf-8')
+
+def confirm_segmentation_for_job(job_id: str):
+    jobs = load_jobs()
+    job = jobs.get(job_id)
+
+    if not job:
+        raise Exception(f"Job {job_id} not found")
+
+    # TODO Start Segmentation
+
+    job["status"] = "awaiting_final_processing"
+    save_jobs(jobs)
+
+    return {"status": "ok"}
+
+def send_final_result_zip(job_id):
+    result_folder = f"storage/results/{job_id}"
+    os.makedirs(result_folder, exist_ok=True)
+    result_zip = os.path.join(result_folder, "final_result.zip")
+
+    if not os.path.exists(result_zip):
+        raise Exception(f"Result ZIP for job {job_id} not found")
+    return FileResponse(result_zip, filename=f"{job_id}_result.zip")
 
 async def start_new_job(project_name: str, files: List[UploadFile]) -> str:
     job_id = str(uuid.uuid4())
@@ -127,7 +159,7 @@ def process_job(job_id: str, folder: str):
         log.write(f"Job {job_id} gestartet für Ordner: {folder}\n")
         log.flush()
 
-        # Dummy-Rechenprozess simulieren (später: Calibration + 3DGS MCMC + SegTransform)
+        # TODO COLMAP + 3DGS MCMC + SegTrain)
         time.sleep(5)
         log.write(f"Job {job_id} abgeschlossen.\n")
 

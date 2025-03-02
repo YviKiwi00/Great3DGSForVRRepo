@@ -1,12 +1,14 @@
 from fastapi import APIRouter, UploadFile, File, Form
-from fastapi.responses import PlainTextResponse
+from fastapi.responses import PlainTextResponse, FileResponse
 from typing import List
 from services.jobs_service import (get_all_jobs,
                                    start_new_job,
                                    get_job_details,
                                    get_job_logs,
                                    get_prompt_image,
-                                   handle_segmentation_prompt)
+                                   handle_segmentation_prompt,
+                                   confirm_segmentation_for_job,
+                                   send_final_result_zip)
 
 router = APIRouter()
 
@@ -37,3 +39,11 @@ def get_segment_prompt_image(job_id: str):
 @router.post("/jobs/{job_id}/segmentationPrompt")
 def process_segmentation_prompt(job_id: str, point: dict):
     return handle_segmentation_prompt(job_id, point)
+
+@router.post("/jobs/{job_id}/confirmSegmentation")
+def confirm_segmentation(job_id: str):
+    return confirm_segmentation_for_job(job_id)
+
+@router.get("/jobs/{job_id}/downloadResult")
+def download_result(job_id: str):
+    return send_final_result_zip(job_id)

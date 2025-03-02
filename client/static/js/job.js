@@ -2,20 +2,40 @@ document.addEventListener("DOMContentLoaded", async () => {
     const params = new URLSearchParams(window.location.search);
     const jobId = params.get("id");
 
-    loadJobDetails(jobId);
+    pollJobDetails(jobId);
     pollJobLog(jobId);
 });
 
-async function loadJobDetails(jobId) {
-    const response = await fetch(`/jobs/${jobId}`);
-    const job = await response.json();
-
+function pollJobDetails(jobId) {
     const jobInfo = document.getElementById("jobInfo");
-    jobInfo.innerHTML = `
-        <p><strong>Job-ID:</strong> ${job.id}</p>
-        <p><strong>Projektname:</strong> ${job.project_name}</p>
-        <p><strong>Status:</strong> ${job.status}</p>
-    `;
+
+    async function fetchAndUpdateDetails() {
+        const response = await fetch(`/jobs/${jobId}`);
+        const job = await response.json();
+
+        switch (job.status) {
+            case 'ready_for_segmentation':
+                document.getElementById('showSegmentationImage').style.display = 'block';
+                break;
+            case 'awaiting_final_processing':
+                document.getElementById('showSegmentationImage').style.display = 'none';
+                document.getElementById('segmentationContainer').innerHTML = '';
+                break;
+            case 'final_result_ready':
+                document.getElementById('downloadButton').style.display = 'block';
+                break;
+        }
+
+        jobInfo.innerHTML = `
+            <p><strong>Job-ID:</strong> ${job.id}</p>
+            <p><strong>Projektname:</strong> ${job.project_name}</p>
+            <p><strong>Status:</strong> ${job.status}</p>
+        `;
+
+        setTimeout(fetchAndUpdateDetails, 5000);  // alle 5 Sekunden
+    }
+
+    fetchAndUpdateDetails()
 }
 
 function pollJobLog(jobId) {
@@ -31,7 +51,6 @@ function pollJobLog(jobId) {
 }
 
 function downloadResult() {
-    const params = new URLSearchParams(window.location.search);
-    const jobId = params.get("id");
+    const jobId = new URLSearchParams(window.location.search).get('id');
     window.location.href = `/jobs/${jobId}/downloadResult`;
 }

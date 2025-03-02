@@ -3,7 +3,8 @@ from services.jobs_service import (fetch_jobs_from_server,
                                    fetch_job_details,
                                    fetch_job_logs,
                                    fetch_segment_prompt_image,
-                                   send_prompt_to_server)
+                                   send_prompt_to_server,
+                                   confirm_segmentation_for_job)
 
 jobs_blueprint = Blueprint('jobs', __name__)
 
@@ -30,3 +31,8 @@ def get_segment_prompt_image(job_id):
 def send_segmentation_prompt(job_id):
     data = request.get_json()
     return jsonify(send_prompt_to_server(job_id, data))
+
+@jobs_blueprint.route('/jobs/<job_id>/confirmSegmentation', methods=['POST'])
+def confirm_segmentation(job_id):
+    confirm_segmentation_for_job(job_id)
+    return jsonify({"status": "ok"})
