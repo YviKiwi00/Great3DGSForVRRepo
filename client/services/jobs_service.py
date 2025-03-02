@@ -19,3 +19,15 @@ def fetch_job_logs(job_id):
     if response.status_code != 200:
         raise Exception(f"Failed to fetch logs: {response.text}")
     return response.text
+
+def fetch_segment_prompt_image(job_id):
+    response = requests.get(f"{API_BASE}/jobs/{job_id}/segmentationPromptImage")
+    if response.status_code != 200:
+        raise Exception(f"Failed to fetch prompt image: {response.text}")
+    return response.content
+
+def send_prompt_to_server(job_id, point):
+    response = requests.post(f"{API_BASE}/jobs/{job_id}/segmentationPrompt", json=point)
+    if response.status_code != 200:
+        raise Exception(f"Failed to send segmentation prompt: {response.text}")
+    return response.json()

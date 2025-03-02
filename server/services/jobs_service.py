@@ -3,6 +3,8 @@ import uuid
 import shutil
 from typing import List
 from fastapi import UploadFile
+from fastapi.responses import FileResponse
+import base64
 import json
 import threading
 import time
@@ -64,9 +66,36 @@ def get_job_logs(job_id: str) -> str:
     with open(log_path, "r") as f:
         return f.read()
 
+def get_prompt_image(job_id: str):
+    image_folder = f"storage/uploads/{job_id}/input"
+    images = [f for f in os.listdir(image_folder) if f.endswith(('.png', '.jpg', '.jpeg'))]
+    if not images:
+        raise Exception("No images found for this job.")
+
+    first_image = os.path.join(image_folder, images[0])
+    return FileResponse(first_image)
+
+def handle_segmentation_prompt(job_id: str, point: dict):
+    x, y = point['x'], point['y']
+
+    # Hier später echte Segmentierung (aktuell Dummy)
+
+    preview_paths = [
+        "static/dummy1.jpg",
+        "static/dummy2.jpg",
+        "static/dummy3.jpg"
+    ]
+    previews = [encode_image_as_base64(p) for p in preview_paths]
+
+    return {"previews": previews}
+
+def encode_image_as_base64(filepath):
+    with open(filepath, "rb") as f:
+        return base64.b64encode(f.read()).decode('utf-8')
+
 async def start_new_job(project_name: str, files: List[UploadFile]) -> str:
     job_id = str(uuid.uuid4())
-    project_folder = os.path.join(UPLOAD_DIR, f"{project_name}_{job_id}")
+    project_folder = os.path.join(UPLOAD_DIR, f"{job_id}")
     os.makedirs(project_folder)
 
     input_folder = os.path.join(project_folder, "input")

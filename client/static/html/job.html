@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="../css/job.css">
     <script src="../js/navigation.js" defer></script>
     <script src="../js/job.js" defer></script>
+    <script src="../js/segmentationPrompt.js" defer></script>
 </head>
 <body>
     <nav>
@@ -16,10 +17,16 @@
     <main>
         <h1>Job Details</h1>
         <div id="jobInfo">
-            <!-- Dynamisch befüllt -->
+            <!-- Filled dynamically -->
         </div>
         <pre id="jobLog"></pre>
-        <button id="downloadButton" onclick="downloadResult()">Ergebnis herunterladen</button>
+        <button id="downloadButton" style="display:none;" onclick="downloadResult()">Download Result</button>
+
+        <div id="segmentationContainer">
+            <canvas id="promptImageCanvas"></canvas>
+            <div id="previewContainer"></div>
+            <button id="confirmButton" style="display:none;" onclick="confirmSegmentation()">Confirm Segmentation</button>
+        </div>
     </main>
 </body>
 </html>
