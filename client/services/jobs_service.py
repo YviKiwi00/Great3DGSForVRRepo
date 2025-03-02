@@ -7,3 +7,15 @@ def fetch_jobs_from_server():
     if response.status_code != 200:
         raise Exception(f"Failed to fetch jobs: {response.text}")
     return response.json()
+
+def fetch_job_details(job_id):
+    response = requests.get(f"{API_BASE}/jobs/{job_id}")
+    if response.status_code != 200:
+        raise Exception(f"Failed to fetch job details: {response.text}")
+    return response.json()
+
+def fetch_job_logs(job_id):
+    response = requests.get(f"{API_BASE}/jobs/{job_id}/logs")
+    if response.status_code != 200:
+        raise Exception(f"Failed to fetch logs: {response.text}")
+    return response.text

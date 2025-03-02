@@ -36,6 +36,34 @@ def get_all_jobs():
         for job_id, data in jobs.items()
     ]
 
+def get_job_details(job_id: str):
+    jobs = load_jobs()
+    job = jobs.get(job_id)
+
+    if not job:
+        raise Exception(f"Job {job_id} not found")
+
+    return {
+        "id": job_id,
+        "project_name": job["project_name"],
+        "status": job["status"],
+        "log_file": job.get("log_file", "")
+    }
+
+def get_job_logs(job_id: str) -> str:
+    jobs = load_jobs()
+    job = jobs.get(job_id)
+
+    if not job or "log_file" not in job:
+        return f"Log für Job {job_id} nicht gefunden."
+
+    log_path = job["log_file"]
+    if not os.path.exists(log_path):
+        return f"Logdatei {log_path} nicht gefunden."
+
+    with open(log_path, "r") as f:
+        return f.read()
+
 async def start_new_job(project_name: str, files: List[UploadFile]) -> str:
     job_id = str(uuid.uuid4())
     project_folder = os.path.join(UPLOAD_DIR, f"{project_name}_{job_id}")
@@ -57,8 +85,10 @@ async def start_new_job(project_name: str, files: List[UploadFile]) -> str:
     }
     save_jobs(jobs)
 
-    # Hintergrund-Thread starten
-    threading.Thread(target=process_job, args=(job_id, project_folder)).start()
+    # Start thread in background
+    thread = threading.Thread(target=process_job, args=(job_id, project_folder))
+    thread.daemon = True
+    thread.start()
 
     return job_id
 

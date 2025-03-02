@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify
-from services.jobs_service import fetch_jobs_from_server
+from services.jobs_service import fetch_jobs_from_server, fetch_job_details, fetch_job_logs
 
 jobs_blueprint = Blueprint('jobs', __name__)
 
@@ -7,3 +7,13 @@ jobs_blueprint = Blueprint('jobs', __name__)
 def list_jobs():
     jobs = fetch_jobs_from_server()
     return jsonify(jobs)
+
+@jobs_blueprint.route('/jobs/<job_id>', methods=['GET'])
+def get_job_details(job_id):
+    job_details = fetch_job_details(job_id)
+    return jsonify(job_details)
+
+@jobs_blueprint.route('/jobs/<job_id>/logs', methods=['GET'])
+def get_job_logs(job_id):
+    logs = fetch_job_logs(job_id)
+    return logs
