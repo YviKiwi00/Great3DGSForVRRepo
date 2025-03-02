@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from ..services.upload_service import handle_image_upload
+from services.upload_service import handle_image_upload
 
 upload_blueprint = Blueprint('upload', __name__)
 
