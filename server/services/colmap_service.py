@@ -2,7 +2,9 @@ import subprocess
 import os
 
 def run_colmap(job_id: str, source_path: str, resize: bool = False):
-    script_path = os.path.join(os.path.dirname(__file__), "..", "great3dgsforvr", "3dgs-mcmc", "convert.py")
+    script_path = os.path.join(
+        os.path.dirname(__file__),
+        "..", "great3dgsforvr", "3dgs-mcmc", "convert.py")
 
     cmd = [
         "python", script_path,

@@ -4,28 +4,29 @@ import argparse
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Setup the environment')
     
-    # parser.add_argument('--no_nvdiffrast', action='store_true', help='Skip installation of Nvdiffrast')
+    parser.add_argument('--no_nvdiffrast', action='store_true', help='Skip installation of Nvdiffrast')
     # parser.add_argument('--no_deva', action='store_true', help='Skip installation of Tracking-Anything-with-DEVA')
     # parser.add_argument('--no_lama', action='store_true', help='Skip installation of LaMa')
-    # args = parser.parse_args()
+    args = parser.parse_args()
     
     # Create a new conda environment
     print("[INFO] Creating the conda environment for Great3DGSForVR...")
     os.system("conda env create -f environment.yml")
     print("[INFO] Conda environment created.")
 
+    # TODO do installation for all repos correctly
     # Install 3D Gaussian Splatting rasterizer
-    print("[INFO] Installing the 3D Gaussian Splatting rasterizer...")
-    os.chdir("gaussian_splatting/submodules/diff-gaussian-rasterization/")
-    os.system("conda run -n frosting pip install -e .")
-    print("[INFO] 3D Gaussian Splatting rasterizer installed.")
+    # print("[INFO] Installing the 3D Gaussian Splatting rasterizer...")
+    # os.chdir("gaussian_splatting/submodules/diff-gaussian-rasterization/")
+    # os.system("conda run -n frosting pip install -e .")
+    # print("[INFO] 3D Gaussian Splatting rasterizer installed.")
 
     # Install simple-knn
-    print("[INFO] Installing simple-knn...")
-    os.chdir("../simple-knn/")
-    os.system("conda run -n frosting pip install -e .")
-    print("[INFO] simple-knn installed.")
-    os.chdir("../../../")
+    # print("[INFO] Installing simple-knn...")
+    # os.chdir("../simple-knn/")
+    # os.system("conda run -n frosting pip install -e .")
+    # print("[INFO] simple-knn installed.")
+    # os.chdir("../../../")
 
     # Install Nvdiffrast
     if args.no_nvdiffrast:
@@ -39,8 +40,5 @@ if __name__ == '__main__':
         print(
             "[INFO] Please note that Nvdiffrast will take a few seconds or minutes to build the first time it is used.")
         os.chdir("../")
-
-    print("[INFO] Frosting installation complete.")
-
 
     print("[INFO] Great3DGSForVR installation complete.")

@@ -4,13 +4,13 @@ import shutil
 import base64
 import json
 import threading
-import time
 
 from typing import List
 from fastapi import UploadFile
 from fastapi.responses import FileResponse
 
 from services.colmap_service import run_colmap
+from services.mcmc_service import run_3dgsmcmc
 
 STORAGE_DIR = "storage"
 UPLOAD_DIR = os.path.join(STORAGE_DIR, "uploads")
@@ -162,12 +162,26 @@ def process_job(job_id: str, folder: str):
         log.write(f"Job {job_id} gestartet für Ordner: {folder}\n")
         log.flush()
 
+    source_path = f"storage/uploads/{job_id}"
+    output_path = f"storage/results/{job_id}"
+
+    try:
         # COLMAP
-        source_path = f"storage/uploads/{job_id}"
         run_colmap(job_id, source_path, resize=True)
+        # 3DGS MCMC Training
+        run_3dgsmcmc(job_id, source_path, output_path)
+        # TODO SegTrain
 
-        # TODO 3DGS MCMC + SegTrain
+        jobs = load_jobs()
+        jobs[job_id]["status"] = "ready_for_segmentation"
+        save_jobs(jobs)
 
-    jobs = load_jobs()
-    jobs[job_id]["status"] = "ready_for_segmentation"
-    save_jobs(jobs)
+    except Exception as e:
+        with open(log_file, 'a') as log:
+            log.write(f"Error during training: {str(e)}\n")
+            log.flush()
+
+        jobs = load_jobs()
+        jobs[job_id]["status"] = "failed"
+        save_jobs(jobs)
+
