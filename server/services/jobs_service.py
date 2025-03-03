@@ -1,13 +1,16 @@
 import os
 import uuid
 import shutil
-from typing import List
-from fastapi import UploadFile
-from fastapi.responses import FileResponse
 import base64
 import json
 import threading
 import time
+
+from typing import List
+from fastapi import UploadFile
+from fastapi.responses import FileResponse
+
+from services.colmap_service import run_colmap
 
 STORAGE_DIR = "storage"
 UPLOAD_DIR = os.path.join(STORAGE_DIR, "uploads")
@@ -159,9 +162,11 @@ def process_job(job_id: str, folder: str):
         log.write(f"Job {job_id} gestartet für Ordner: {folder}\n")
         log.flush()
 
-        # TODO COLMAP + 3DGS MCMC + SegTrain)
-        time.sleep(5)
-        log.write(f"Job {job_id} abgeschlossen.\n")
+        # COLMAP
+        source_path = f"storage/uploads/{job_id}"
+        run_colmap(job_id, source_path, resize=True)
+
+        # TODO 3DGS MCMC + SegTrain
 
     jobs = load_jobs()
     jobs[job_id]["status"] = "ready_for_segmentation"
