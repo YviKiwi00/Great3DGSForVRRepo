@@ -158,7 +158,7 @@ async def start_new_job(project_name: str, files: List[UploadFile]) -> str:
     return job_id
 
 def process_job(job_id: str, folder: str):
-    log_file_and_console(f"Job {job_id} started for {folder}\n", log)
+    log_file_and_console(job_id, f"Job {job_id} started for {folder}\n")
 
     try:
         # COLMAP
