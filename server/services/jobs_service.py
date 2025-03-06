@@ -1,24 +1,25 @@
 import os
 import uuid
 import shutil
-import base64
 import json
 import threading
+import requests
 
 from typing import List
 from fastapi import UploadFile
 from fastapi.responses import FileResponse
-
-from services.colmap_service import run_colmap
-from services.mcmc_service import run_3dgsmcmc
-
-STORAGE_DIR = "storage"
-UPLOAD_DIR = os.path.join(STORAGE_DIR, "uploads")
-LOGS_DIR = os.path.join(STORAGE_DIR, "logs")
-JOBS_FILE = os.path.join(STORAGE_DIR, "jobs.json")
+from utils.jobs_utils import ( API_BASE,
+                               UPLOAD_DIR,
+                               LOGS_DIR,
+                               RESULTS_DIR,
+                               JOBS_FILE,
+                               encode_image_as_base64,
+                               wait_for_job_status,
+                               log_file_and_console )
 
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 os.makedirs(LOGS_DIR, exist_ok=True)
+os.makedirs(RESULTS_DIR, exist_ok=True)
 
 def load_jobs():
     if os.path.exists(JOBS_FILE):
@@ -67,11 +68,16 @@ def get_job_logs(job_id: str) -> str:
         return f"Logdatei {log_path} nicht gefunden."
 
     with open(log_path, "r") as f:
-        return f.read()
+        lines = f.readlines()
+
+    tail = lines[-2000:] if len(lines) > 2000 else lines
+
+    return "".join(tail)
 
 def get_prompt_image(job_id: str):
     image_folder = f"storage/uploads/{job_id}/input"
     images = [f for f in os.listdir(image_folder) if f.endswith(('.png', '.jpg', '.jpeg'))]
+
     if not images:
         raise Exception("No images found for this job.")
 
@@ -101,10 +107,6 @@ def handle_segmentation_prompt(job_id: str, point: dict):
 
     return {"previews": previews}
 
-def encode_image_as_base64(filepath):
-    with open(filepath, "rb") as f:
-        return base64.b64encode(f.read()).decode('utf-8')
-
 def confirm_segmentation_for_job(job_id: str):
     jobs = load_jobs()
     job = jobs.get(job_id)
@@ -114,18 +116,17 @@ def confirm_segmentation_for_job(job_id: str):
 
     # TODO Start Segmentation
 
-    job["status"] = "awaiting_final_processing"
+    job["status"] = "running"
     save_jobs(jobs)
 
     return {"status": "ok"}
 
 def send_final_result_zip(job_id):
-    result_folder = f"storage/results/{job_id}"
-    os.makedirs(result_folder, exist_ok=True)
-    result_zip = os.path.join(result_folder, "final_result.zip")
+    result_zip = os.path.join(RESULTS_DIR, f"final_result_{job_id}.zip")
 
     if not os.path.exists(result_zip):
         raise Exception(f"Result ZIP for job {job_id} not found")
+
     return FileResponse(result_zip, filename=f"{job_id}_result.zip")
 
 async def start_new_job(project_name: str, files: List[UploadFile]) -> str:
@@ -144,7 +145,7 @@ async def start_new_job(project_name: str, files: List[UploadFile]) -> str:
     jobs = load_jobs()
     jobs[job_id] = {
         "project_name": project_name,
-        "status": "running",
+        "status": "started",
         "log_file": os.path.join(LOGS_DIR, f"{job_id}.log")
     }
     save_jobs(jobs)
@@ -157,31 +158,28 @@ async def start_new_job(project_name: str, files: List[UploadFile]) -> str:
     return job_id
 
 def process_job(job_id: str, folder: str):
-    log_file = os.path.join(LOGS_DIR, f"{job_id}.log")
-    with open(log_file, 'w') as log:
-        log.write(f"Job {job_id} gestartet für Ordner: {folder}\n")
-        log.flush()
-
-    source_path = f"storage/uploads/{job_id}"
-    output_path = f"storage/results/{job_id}"
+    log_file_and_console(f"Job {job_id} started for {folder}\n", log)
 
     try:
         # COLMAP
-        run_colmap(job_id, source_path, resize=True)
+        response = requests.post(f"{API_BASE}/jobs/{job_id}/colmap")
+        if response.status_code != 200:
+            raise Exception(f"Colmap failed: {response.text}")
+        wait_for_job_status(job_id, API_BASE, "done")
+
         # 3DGS MCMC Training
-        run_3dgsmcmc(job_id, source_path, output_path)
+        response = requests.post(f"{API_BASE}/jobs/{job_id}/mcmc")
+        if response.status_code != 200:
+            raise Exception(f"MCMC failed: {response.text}")
+        wait_for_job_status(job_id, API_BASE, "done")
+
         # TODO SegTrain
 
-        jobs = load_jobs()
-        jobs[job_id]["status"] = "ready_for_segmentation"
-        save_jobs(jobs)
-
     except Exception as e:
-        with open(log_file, 'a') as log:
-            log.write(f"Error during training: {str(e)}\n")
-            log.flush()
+        log_file_and_console(job_id, f"Error during training: {str(e)}\n")
 
         jobs = load_jobs()
-        jobs[job_id]["status"] = "failed"
-        save_jobs(jobs)
+        if not "failed" in jobs[job_id]["status"]:
+            jobs[job_id]["status"] = "failed"
+            save_jobs(jobs)
 

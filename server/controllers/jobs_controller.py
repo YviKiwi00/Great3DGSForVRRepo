@@ -18,10 +18,10 @@ def get_jobs():
 
 @router.post("/jobs/start")
 async def start_job(
-    projectName: str = Form(...),
+    project_name: str = Form(...),
     files: List[UploadFile] = File(...)
 ):
-    job_id = await start_new_job(projectName, files)
+    job_id = await start_new_job(project_name, files)
     return {"job_id": job_id}
 
 @router.get("/jobs/{job_id}")

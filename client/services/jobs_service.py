@@ -20,6 +20,18 @@ def fetch_job_logs(job_id):
         raise Exception(f"Failed to fetch logs: {response.text}")
     return response.text
 
+def trigger_colmap(job_id):
+    response = requests.post(f"{API_BASE}/jobs/{job_id}/colmap")
+    if response.status_code != 200:
+        raise Exception(f"Failed to start Colmap for job {job_id}: {response.text}")
+    return response.json()
+
+def trigger_mcmc(job_id):
+    response = requests.post(f"{API_BASE}/jobs/{job_id}/mcmc")
+    if response.status_code != 200:
+        raise Exception(f"Failed to start MCMC for job {job_id}: {response.text}")
+    return response.json()
+
 def fetch_segment_prompt_image(job_id):
     response = requests.get(f"{API_BASE}/jobs/{job_id}/segmentationPromptImage")
     if response.status_code != 200:

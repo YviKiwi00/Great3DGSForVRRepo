@@ -13,16 +13,22 @@ function pollJobDetails(jobId) {
         const response = await fetch(`/jobs/${jobId}`);
         const job = await response.json();
 
-        switch (job.status) {
-            case 'ready_for_segmentation':
-                document.getElementById('showSegmentationImage').style.display = 'block';
+        switch (true) {
+            case job.status.includes('done'):
+                updateButtons(true, true, false, false)
                 break;
-            case 'awaiting_final_processing':
-                document.getElementById('showSegmentationImage').style.display = 'none';
+            case job.status.includes('failed'):
+                updateButtons(true, true, false, false)
+                break;
+            case job.status.includes('ready_for_segmentation'):
+                updateButtons(true, true, true, false)
+                break;
+            case job.status.includes('running'):
+                updateButtons(false, false, false, false)
                 document.getElementById('segmentationContainer').innerHTML = '';
                 break;
-            case 'final_result_ready':
-                document.getElementById('downloadButton').style.display = 'block';
+            case job.status.includes('final_result_ready'):
+                updateButtons(true, true, true, true)
                 break;
         }
 
@@ -52,6 +58,42 @@ function pollJobLog(jobId) {
     }
 
     fetchAndUpdateLog();
+}
+
+function updateButtons(colmap, mcmc, segmentation, download) {
+    const colmapButton = document.getElementById('colmapButton');
+    const mcmcButton = document.getElementById('mcmcButton');
+    const showSegmentationImageButton = document.getElementById('showSegmentationImageButton');
+    const downloadButton = document.getElementById('downloadButton');
+
+    colmapButton.style.display = colmap ? 'block' : 'none';
+    mcmcButton.style.display = mcmc ? 'block' : 'none';
+    showSegmentationImageButton.style.display = segmentation ? 'block' : 'none';
+    downloadButton.style.display = download ? 'block' : 'none';
+}
+
+async function startColmap() {
+    const response = await fetch(`/jobs/${jobId}`);
+    const job = await response.json();
+
+    if (job.status.includes('running')) {
+        alert('There is still a Job running, please wait.');
+        return;
+    }
+    await fetch(`/jobs/${jobId}/colmap`, {method: 'POST'});
+    alert('Colmap-Process started!');
+}
+
+async function startMCMC() {
+    const response = await fetch(`/jobs/${jobId}`);
+    const job = await response.json();
+
+    if (job.status.includes('running')) {
+        alert('There is still a Job running, please wait.');
+        return;
+    }
+    await fetch(`/jobs/${jobId}/mcmc`, {method: 'POST'});
+    alert('MCMC-Process started!');
 }
 
 function downloadResult() {

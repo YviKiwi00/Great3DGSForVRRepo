@@ -19,9 +19,12 @@
         <div id="jobInfo">
             <!-- Filled dynamically -->
         </div>
-        <pre id="jobLog"></pre>
-        <button id="showSegmentationImage" style="display:none;" onclick="loadPromptImage()">Load Semgmentation Image</button>
+        <button id="colmapButton" style="display:none;" onclick="startColmap()">Start Colmap</button>
+        <button id="mcmcButton" style="display:none;" onclick="startMCMC()">Start MCMC</button>
+        <button id="showSegmentationImageButton" style="display:none;" onclick="loadPromptImage()">Load Semgmentation Image</button>
         <button id="downloadButton" style="display:none;" onclick="downloadResult()">Download Result</button>
+
+        <pre id="jobLog"></pre>
 
         <div id="segmentationContainer">
             <canvas id="promptImageCanvas"></canvas>

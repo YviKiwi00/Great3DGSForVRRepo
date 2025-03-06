@@ -2,6 +2,8 @@ from flask import Blueprint, jsonify, request
 from services.jobs_service import (fetch_jobs_from_server,
                                    fetch_job_details,
                                    fetch_job_logs,
+                                   trigger_colmap,
+                                   trigger_mcmc,
                                    fetch_segment_prompt_image,
                                    send_prompt_to_server,
                                    confirm_segmentation_for_job)
@@ -22,6 +24,14 @@ def get_job_details(job_id):
 def get_job_logs(job_id):
     logs = fetch_job_logs(job_id)
     return logs
+
+@jobs_blueprint.route('/jobs/<job_id>/colmap', methods=['POST'])
+def start_colmap(job_id):
+    return jsonify(trigger_colmap(job_id))
+
+@jobs_blueprint.route('/jobs/<job_id>/mcmc', methods=['POST'])
+def start_mcmc(job_id):
+    return jsonify(trigger_mcmc(job_id))
 
 @jobs_blueprint.route('/jobs/<job_id>/segmentationPromptImage', methods=['GET'])
 def get_segment_prompt_image(job_id):
