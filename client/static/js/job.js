@@ -42,7 +42,11 @@ function pollJobLog(jobId) {
     async function fetchAndUpdateLog() {
         const response = await fetch(`/jobs/${jobId}/logs`);
         const logText = await response.text();
-        document.getElementById("jobLog").innerText = logText;
+
+        const logElement = document.getElementById("jobLog");
+        logElement.innerText = logText;
+
+        logElement.scrollTop = logElement.scrollHeight;
 
         setTimeout(fetchAndUpdateLog, 5000);  // alle 5 Sekunden
     }

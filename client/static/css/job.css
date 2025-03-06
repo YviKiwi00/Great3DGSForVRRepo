@@ -6,9 +6,11 @@
     background-color: var(--background);
     border: 1px solid var(--primary);
     padding: 10px;
-    height: 200px;
+    height: 300px;
     overflow-y: auto;
     white-space: pre-wrap;
+    font-family: monospace;
+    resize: vertical;
 }
 
 button {
