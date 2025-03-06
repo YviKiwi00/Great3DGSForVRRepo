@@ -105,3 +105,28 @@ python install.py
 conda activate Great3DGSForVR
 ```
 </details>
+
+## Starten der Anwendung
+Das Repo ist aufgebaut in einen Client und einen Server. Der Client bietet ein einfaches Frontend zum Hochladen von Bilddatensätzen und schickt Anfragen an den Server zum Durchführen der Berechnungen. Der Client kann nach Hochladen auch gestoppt werden und je nach Bedarf wieder gestartet. Dieser holt sich Informationen zum Stand der Berechnungen beim Server ab.
+Der Server sollte auf einem Rechner mit sehr guter Grafikkarte laufen. Beide Services können aber auch lokal auf dem selbem Rechner gestartet und ausgeführt werden.
+
+**Starten des Servers:**
+```shell 
+  cd server
+  PYTHONPATH=. python server.py
+```
+
+**Umleiten des Ports über SSH-Verbindung (falls Server auf anderem Rechner läuft):**
+```shell 
+  ssh -L 5000:localhost:5000 <username>@<ssh-adress>
+```
+
+**Starten des Clients:**
+```shell 
+  cd client
+  PYTHONPATH=. python client.py
+```
+
+Das Frontend kann dann über http://localhost:8000/static/html/index.html aufgerufen werden.
+
+## Nutzung
