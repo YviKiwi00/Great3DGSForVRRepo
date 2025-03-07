@@ -1,0 +1,6 @@
+[submodule "server/great3dgsforvr/3dgs-mcmc"]
+	path = server/great3dgsforvr/3dgs-mcmc
+	url = https://github.com/YviKiwi00/3dgs-mcmc.git
+[submodule "server/great3dgsforvr/SAGS"]
+	path = server/great3dgsforvr/SAGS
+	url = https://github.com/YviKiwi00/SAGS.git
