@@ -17,7 +17,7 @@ if __name__ == '__main__':
     # Install 3D Gaussian Splatting rasterizer and simple-knn for MCMC
     print("[INFO] Installing the 3D Gaussian Splatting rasterizer for MCMC...")
     os.chdir("server/great3dgsforvr/3dgs-mcmc/submodules/")
-    os.system("git clone --recursive https://github.com/ashawkey/diff-gaussian-rasterization")
+    os.system("git clone --recursive https://github.com/YviKiwi00/diff-gaussian-rasterization.git")
     os.system("conda run -n Great3DGSForVR pip install ./diff-gaussian-rasterization")
     print("[INFO] 3D Gaussian Splatting rasterizer for MCMC installed.")
 
@@ -29,7 +29,7 @@ if __name__ == '__main__':
     # Install 3D Gaussian Splatting rasterizer, simple-knn, SAM and GroundingDINO for SAGD
     print("[INFO] Installing the 3D Gaussian Splatting rasterizer for SAGD...")
     os.chdir("server/great3dgsforvr/SAGS/gaussiansplatting/submodules/")
-    os.system("git clone --recursive https://github.com/ashawkey/diff-gaussian-rasterization")
+    os.system("git clone --recursive https://github.com/YviKiwi00/diff-gaussian-rasterization.git")
     os.system("conda run -n Great3DGSForVR pip install ./diff-gaussian-rasterization")
     print("[INFO] 3D Gaussian Splatting rasterizer for SAGD installed.")
 
