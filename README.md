@@ -9,7 +9,7 @@ Die Installation hier wird nur für Ubuntu-basierte Systeme beschrieben. Betrieb
 
 Erst muss das Repo und seine Submodules geklont werden:
 ```shell
-git clone https://github.com/YviKiwi00/Great3DGSForVRRepo.git --recursive
+git clone --recurse-submodules https://github.com/YviKiwi00/Great3DGSForVRRepo.git
 ```
 
 ### 1. Abhängigkeiten
