@@ -17,6 +17,8 @@ from utils.jobs_utils import ( API_BASE,
                                wait_for_job_status,
                                log_file_and_console )
 
+from great3dgsforvr.SAGS.preview_segmentation import preview_segmentation
+
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 os.makedirs(LOGS_DIR, exist_ok=True)
 os.makedirs(RESULTS_DIR, exist_ok=True)
@@ -96,14 +98,14 @@ def handle_segmentation_prompt(job_id: str, point: dict):
     job["latest_prompt"] = {"x": x, "y": y}
     save_jobs(jobs)
 
-    # TODO Segmentation Preview
+    previews = preview_segmentation(x, y)
 
-    preview_paths = [
-        "static/dummy1.jpg",
-        "static/dummy2.jpg",
-        "static/dummy3.jpg"
-    ]
-    previews = [encode_image_as_base64(p) for p in preview_paths]
+    # preview_paths = [
+    #     "static/dummy1.jpg",
+    #     "static/dummy2.jpg",
+    #     "static/dummy3.jpg"
+    # ]
+    # previews = [encode_image_as_base64(p) for p in preview_paths]
 
     return {"previews": previews}
 
@@ -114,12 +116,12 @@ def confirm_segmentation_for_job(job_id: str):
     if not job:
         raise Exception(f"Job {job_id} not found")
 
-    # TODO Start Segmentation
+    # Gaussian Segmentation
+    response = requests.post(f"{API_BASE}/jobs/{job_id}/gaussianSegmentation")
+    if response.status_code != 200:
+        raise Exception(f"Gaussian Segmentation failed: {response.text}")
 
-    job["status"] = "running"
-    save_jobs(jobs)
-
-    return {"status": "ok"}
+    return response
 
 def send_final_result_zip(job_id):
     result_zip = os.path.join(RESULTS_DIR, f"final_result_{job_id}.zip")
@@ -173,7 +175,11 @@ def process_job(job_id: str, folder: str):
             raise Exception(f"MCMC failed: {response.text}")
         wait_for_job_status(job_id, API_BASE, "done")
 
-        # TODO SegTrain
+        # Segmentation Preparation
+        response = requests.post(f"{API_BASE}/jobs/{job_id}/segmentationPreparation")
+        if response.status_code != 200:
+            raise Exception(f"Segmentation Preparation failed: {response.text}")
+        wait_for_job_status(job_id, API_BASE, "done")
 
     except Exception as e:
         log_file_and_console(job_id, f"Error during training: {str(e)}\n")

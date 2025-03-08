@@ -2,11 +2,10 @@ import threading
 import subprocess
 import os
 
-from services.jobs_service import ( load_jobs,
-                                    save_jobs,
-                                    UPLOAD_DIR,
-                                    LOGS_DIR )
-from utils.jobs_utils import log_file_and_console
+from services.jobs_service import (load_jobs,
+                                   save_jobs)
+from utils.jobs_utils import (log_file_and_console,
+                              UPLOAD_DIR)
 
 def run_colmap(job_id: str):
     jobs = load_jobs()
