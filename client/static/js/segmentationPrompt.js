@@ -10,7 +10,10 @@ async function loadPromptImage() {
     const blob = await response.blob();
     const img = new Image();
 
+    console.log("In loadPromptImage, called segmentationPromptImage")
+
     img.onload = () => {
+        console.log("Image loaded")
         canvas.width = img.width;
         canvas.height = img.height;
         currentImage = img

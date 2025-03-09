@@ -42,7 +42,8 @@ def segmentation_preparation_subprocess(job_id: str, model_path: str):
 
     cmd = [
         "python", script_path,
-        "--model_path", model_path,
+        "--job_id", job_id,
+        "--model_path", model_path
     ]
 
     log_file_and_console(job_id, "========== Starting Segmentation Preparation for Job {job_id} ==========\n")
@@ -102,7 +103,8 @@ def gaussian_segmentation_subprocess(job_id: str):
     env["PYTHONPATH"] = script_dir
 
     cmd = [
-        "python", script_path
+        "python", script_path,
+        "--job_id", job_id
     ]
 
     log_file_and_console(job_id, "========== Starting Gaussian Segmentation for Job {job_id} ==========\n")

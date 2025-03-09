@@ -97,21 +97,27 @@ def handle_segmentation_prompt(job_id: str, point: dict):
     job["latest_prompt"] = {"x": x, "y": y}
     save_jobs(jobs)
 
+    script_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "great3dgsforvr", "SAGS"))
+    env = {**os.environ, "PYTHONPATH": script_dir}
+
     result = subprocess.run(
         ["python", "-c",
-         f"import great3dgsforvr.SAGS.preview_segmentation as prev_seg; print(json.dumps(prev_seg.preview_segmentation({x}, {y})))"],
-        capture_output=True,
-        text=True,
-        env={**os.environ, "PYTHONPATH": "/../great3dgsforvr/SAGS/"}
+         f"import json; import preview_segmentation as prev_seg; print(json.dumps(prev_seg.preview_segmentation('{job_id}', {x}, {y})))"],
+        env=env,
+        cwd=script_dir,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True
     )
 
-    # Falls der Subprozess fehlschlägt, Fehler werfen
+    print(f"STDOUT: {result.stdout}")
+    print(f"STDERR: {result.stderr}")
+    print(f"Returncode: {result.returncode}")
+
     if result.returncode != 0:
         raise Exception(f"Segmentation Preview failed: {result.stderr}")
 
     previews = json.loads(result.stdout.strip())
-
-    # previews = preview_segmentation(x, y)
 
     # preview_paths = [
     #     "static/dummy1.jpg",
