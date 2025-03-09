@@ -14,7 +14,6 @@ from utils.jobs_utils import ( API_BASE,
                                LOGS_DIR,
                                RESULTS_DIR,
                                JOBS_FILE,
-                               encode_image_as_base64,
                                wait_for_job_status,
                                log_file_and_console )
 
@@ -76,14 +75,8 @@ def get_job_logs(job_id: str) -> str:
     return "".join(tail)
 
 def get_prompt_image(job_id: str):
-    image_folder = f"storage/uploads/{job_id}/input"
-    images = [f for f in os.listdir(image_folder) if f.endswith(('.png', '.jpg', '.jpeg'))]
-
-    if not images:
-        raise Exception("No images found for this job.")
-
-    first_image = os.path.join(image_folder, images[0])
-    return FileResponse(first_image)
+    image_file = os.path.join(os.path.dirname(__file__), "..", "great3dgsforvr", "SAGS", "render_images", f"render_image_{job_id}.png")
+    return FileResponse(image_file)
 
 def handle_segmentation_prompt(job_id: str, point: dict):
     x, y = point['x'], point['y']
@@ -109,10 +102,6 @@ def handle_segmentation_prompt(job_id: str, point: dict):
         stderr=subprocess.PIPE,
         text=True
     )
-
-    print(f"STDOUT: {result.stdout}")
-    print(f"STDERR: {result.stderr}")
-    print(f"Returncode: {result.returncode}")
 
     if result.returncode != 0:
         raise Exception(f"Segmentation Preview failed: {result.stderr}")
