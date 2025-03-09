@@ -129,7 +129,7 @@ def confirm_segmentation_for_job(job_id: str):
     if response.status_code != 200:
         raise Exception(f"Gaussian Segmentation failed: {response.text}")
 
-    return response
+    return response.json()
 
 def send_final_result_zip(job_id):
     result_zip = os.path.join(RESULTS_DIR, f"final_result_{job_id}.zip")

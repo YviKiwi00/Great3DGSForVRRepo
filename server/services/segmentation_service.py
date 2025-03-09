@@ -18,7 +18,7 @@ def run_segmentation_preparation(job_id: str):
 
     def worker():
         try:
-            model_path = os.path.join("../../", RESULTS_DIR, f"{job_id}")
+            model_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", f"{RESULTS_DIR}", f"{job_id}"))
             segmentation_preparation_subprocess(job_id, model_path)
 
             jobs = load_jobs()
@@ -81,7 +81,8 @@ def run_gaussian_segmentation(job_id: str):
 
     def worker():
         try:
-            gaussian_segmentation_subprocess(job_id)
+            model_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", f"{RESULTS_DIR}", f"{job_id}"))
+            gaussian_segmentation_subprocess(job_id, model_path)
 
             jobs = load_jobs()
             jobs[job_id]["status"] = "done_gaussian_segmentation"
@@ -95,7 +96,7 @@ def run_gaussian_segmentation(job_id: str):
 
     threading.Thread(target=worker, daemon=True).start()
 
-def gaussian_segmentation_subprocess(job_id: str):
+def gaussian_segmentation_subprocess(job_id: str, model_path: str):
     script_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "great3dgsforvr", "SAGS"))
     script_path = os.path.join(script_dir, "gaussian_segmentation.py")
 
@@ -104,7 +105,8 @@ def gaussian_segmentation_subprocess(job_id: str):
 
     cmd = [
         "python", script_path,
-        "--job_id", job_id
+        "--job_id", job_id,
+        "--model_path", model_path
     ]
 
     log_file_and_console(job_id, "========== Starting Gaussian Segmentation for Job {job_id} ==========\n")

@@ -10,6 +10,6 @@ def trigger_segmentation_preparation(job_id: str):
     return {"status": "segmentation_preparation_started"}
 
 @router.post("/jobs/{job_id}/gaussianSegmentation")
-def trigger_segmentation_preparation(job_id: str):
+def trigger_gaussian_segmentation(job_id: str):
     run_gaussian_segmentation(job_id)
     return {"status": "gaussian_segmentation_started"}
