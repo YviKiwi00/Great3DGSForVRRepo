@@ -3,28 +3,88 @@ main {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: calc(100vh - 50px);
+    height: calc(100vh - 70px);
     gap: 20px;
+    text-align: center;
+}
+
+input[type="text"] {
+    padding: 12px;
+    width: 280px;
+    border: 2px solid var(--primary);
+    background-color: var(--input-bg);
+    color: var(--text);
+    border-radius: var(--border-radius);
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+input[type="text"]:focus {
+    border-color: var(--highlight);
 }
 
 input[type="file"] {
-    padding: 10px;
-    border: 1px solid var(--primary);
-    background-color: var(--background);
+    display: none;
+}
+
+.file-upload-container {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+
+.file-upload {
+    display: inline-block;
+    background-color: var(--primary);
     color: var(--text);
+    padding: 12px 20px;
+    font-size: 0.9em;
+    border-radius: var(--border-radius);
     cursor: pointer;
+    transition: background 0.3s ease, color 0.3s ease;
+    text-align: center;
+}
+
+.file-upload:hover {
+    color: #000;
+    background-color: var(--highlight);
+}
+
+.file-upload:active {
+    background-color: var(--highlight);
+}
+
+.file-name {
+    margin-top: 10px;
+    font-size: 0.9em;
+    color: var(--highlight);
+    text-align: center;
 }
 
 button {
     background-color: var(--primary);
     color: var(--text);
-    padding: 10px 20px;
+    padding: 12px 20px;
+    font-size: 1em;
+    font-weight: bold;
     border: none;
+    border-radius: var(--border-radius);
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background 0.3s ease, transform 0.1s ease-in-out;
+    box-shadow: 0 4px 8px var(--shadow);
 }
 
 button:hover {
     background-color: var(--highlight);
     color: #000;
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
+#uploadStatus {
+    font-size: 1em;
+    font-weight: bold;
+    color: var(--highlight);
 }

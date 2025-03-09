@@ -15,11 +15,13 @@
     </nav>
     <main>
         <h1>Great3DGSForVR - Upload</h1>
-
-        <label for="projectName">Projektname:</label>
         <input id="projectName" type="text" placeholder="Projektname...">
 
-        <input id="fileInput" type="file"  multiple>
+        <div class="file-upload-container">
+            <label for="fileInput" class="file-upload">Dateien auswählen</label>
+            <input id="fileInput" type="file" multiple>
+            <p id="fileNameDisplay" class="file-name">Keine Datei ausgewählt</p>
+        </div>
 
         <button id="uploadButton" onclick="startUpload()">Upload</button>
 

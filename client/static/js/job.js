@@ -19,6 +19,7 @@ function pollJobDetails(jobId) {
                 break;
             case job.status.includes('failed'):
                 updateButtons(true, true, true, false, false)
+                document.getElementById('segmentationContainer').innerHTML = '';
                 break;
             case job.status.includes('ready_for_segmentation'):
                 updateButtons(true, true, true, true, false)

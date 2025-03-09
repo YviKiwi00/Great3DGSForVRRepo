@@ -1,3 +1,14 @@
+document.getElementById("fileInput").addEventListener("change", function () {
+    let fileNameDisplay = document.getElementById("fileNameDisplay");
+    if (this.files.length > 0) {
+        fileNameDisplay.textContent = this.files.length > 1
+            ? `${this.files.length} Dateien ausgewählt`
+            : this.files[0].name;
+    } else {
+        fileNameDisplay.textContent = "Keine Datei ausgewählt";
+    }
+});
+
 function startUpload() {
     const files = document.getElementById('fileInput').files;
     const projectName = document.getElementById('projectName').value || "UnnamedProject";
