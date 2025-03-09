@@ -32,6 +32,12 @@ def trigger_mcmc(job_id):
         raise Exception(f"Failed to start MCMC for job {job_id}: {response.text}")
     return response.json()
 
+def trigger_segmentation_preparation(job_id):
+    response = requests.post(f"{API_BASE}/jobs/{job_id}/segmentationPreparation")
+    if response.status_code != 200:
+        raise Exception(f"Failed to start Segmentation Preparation for job {job_id}: {response.text}")
+    return response.json()
+
 def fetch_segment_prompt_image(job_id):
     response = requests.get(f"{API_BASE}/jobs/{job_id}/segmentationPromptImage")
     if response.status_code != 200:

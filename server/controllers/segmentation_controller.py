@@ -1,5 +1,6 @@
 from fastapi import APIRouter
-from services.segmentation_service import run_segmentation_preparation, run_gaussian_segmentation
+from services.segmentation_service import (run_segmentation_preparation,
+                                           run_gaussian_segmentation)
 
 router = APIRouter()
 

@@ -15,20 +15,20 @@ function pollJobDetails(jobId) {
 
         switch (true) {
             case job.status.includes('done'):
-                updateButtons(true, true, false, false)
+                updateButtons(true, true, true, false, false)
                 break;
             case job.status.includes('failed'):
-                updateButtons(true, true, false, false)
+                updateButtons(true, true, true, false, false)
                 break;
             case job.status.includes('ready_for_segmentation'):
-                updateButtons(true, true, true, false)
+                updateButtons(true, true, true, true, false)
                 break;
             case job.status.includes('running'):
-                updateButtons(false, false, false, false)
+                updateButtons(false, false, false, false, false)
                 document.getElementById('segmentationContainer').innerHTML = '';
                 break;
             case job.status.includes('final_result_ready'):
-                updateButtons(true, true, true, true)
+                updateButtons(true, true, true, true, true)
                 break;
         }
 
@@ -60,14 +60,16 @@ function pollJobLog(jobId) {
     fetchAndUpdateLog();
 }
 
-function updateButtons(colmap, mcmc, segmentation, download) {
+function updateButtons(colmap, mcmc, segPrep, segmentation, download) {
     const colmapButton = document.getElementById('colmapButton');
     const mcmcButton = document.getElementById('mcmcButton');
+    const segPrepButton = document.getElementById('segPrepButton');
     const showSegmentationImageButton = document.getElementById('showSegmentationImageButton');
     const downloadButton = document.getElementById('downloadButton');
 
     colmapButton.style.display = colmap ? 'block' : 'none';
     mcmcButton.style.display = mcmc ? 'block' : 'none';
+    segPrepButton.style.display = segPrep ? 'block' : 'none';
     showSegmentationImageButton.style.display = segmentation ? 'block' : 'none';
     downloadButton.style.display = download ? 'block' : 'none';
 }
@@ -94,6 +96,18 @@ async function startMCMC() {
     }
     await fetch(`/jobs/${jobId}/mcmc`, {method: 'POST'});
     alert('MCMC-Process started!');
+}
+
+async function startSegPrep() {
+    const response = await fetch(`/jobs/${jobId}`);
+    const job = await response.json();
+
+    if (job.status.includes('running')) {
+        alert('There is still a Job running, please wait.');
+        return;
+    }
+    await fetch(`/jobs/${jobId}/segmentationPreparation`, {method: 'POST'});
+    alert('Segmentation_Preparation-Process started!');
 }
 
 function downloadResult() {

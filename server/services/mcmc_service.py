@@ -23,7 +23,7 @@ def run_mcmc(job_id: str):
             mcmc_subprocess(job_id, source_path, output_path)
 
             jobs = load_jobs()
-            jobs[job_id]["status"] = "ready_for_segmentation"
+            jobs[job_id]["status"] = "done_mcmc"
             save_jobs(jobs)
         except Exception as e:
             jobs = load_jobs()

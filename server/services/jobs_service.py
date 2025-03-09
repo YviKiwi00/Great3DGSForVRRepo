@@ -4,6 +4,7 @@ import shutil
 import json
 import threading
 import requests
+import subprocess
 
 from typing import List
 from fastapi import UploadFile
@@ -16,8 +17,6 @@ from utils.jobs_utils import ( API_BASE,
                                encode_image_as_base64,
                                wait_for_job_status,
                                log_file_and_console )
-
-from great3dgsforvr.SAGS.preview_segmentation import preview_segmentation
 
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 os.makedirs(LOGS_DIR, exist_ok=True)
@@ -98,7 +97,21 @@ def handle_segmentation_prompt(job_id: str, point: dict):
     job["latest_prompt"] = {"x": x, "y": y}
     save_jobs(jobs)
 
-    previews = preview_segmentation(x, y)
+    result = subprocess.run(
+        ["python", "-c",
+         f"import great3dgsforvr.SAGS.preview_segmentation as prev_seg; print(json.dumps(prev_seg.preview_segmentation({x}, {y})))"],
+        capture_output=True,
+        text=True,
+        env={**os.environ, "PYTHONPATH": "/../great3dgsforvr/SAGS/"}
+    )
+
+    # Falls der Subprozess fehlschlägt, Fehler werfen
+    if result.returncode != 0:
+        raise Exception(f"Segmentation Preview failed: {result.stderr}")
+
+    previews = json.loads(result.stdout.strip())
+
+    # previews = preview_segmentation(x, y)
 
     # preview_paths = [
     #     "static/dummy1.jpg",

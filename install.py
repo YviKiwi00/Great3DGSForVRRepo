@@ -47,18 +47,20 @@ if __name__ == '__main__':
         print("[INFO] Installing SAM for SAGD...")
         os.makedirs("dependencies", exist_ok=True)
         os.chdir("dependencies/")
+        os.makedirs("sam_ckpt", exist_ok=True)
+        os.chdir("sam_ckpt/")
         os.system("wget https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.pth")
         os.system("git clone git@github.com:facebookresearch/segment-anything.git")
         os.chdir("segment-anything/")
         os.system("conda run -n Great3DGSForVR pip install -e .")
         print("[INFO] SAM for SAGD installed.")
-        os.chdir("../../../../../../")
+        os.chdir("../../../../../../../")
 
     # Install GroundingDINO
     if args.no_grounding_dino:
         print("[INFO] Skipping installation of GroundingDINO.")
     else:
-        os.chdir("server/great3dgsforvr/SAGS/gaussiansplatting/dependencies/segment-anything/")
+        os.chdir("server/great3dgsforvr/SAGS/gaussiansplatting/dependencies/sam_ckpt/segment-anything/")
         print("[INFO] Installing GroundingDINO for SAGD...")
         os.system("git clone https://github.com/IDEA-Research/GroundingDINO.git")
         os.chdir("GroundingDINO/")
@@ -67,7 +69,7 @@ if __name__ == '__main__':
         os.chdir("weights/")
         os.system("wget https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha/groundingdino_swint_ogc.pth")
         print("[INFO] GroundingDino for SAGD installed.")
-        os.chdir("../../../../../../../../")
+        os.chdir("../../../../../../../../../")
 
     # Install Nvdiffrast
     if args.no_nvdiffrast:

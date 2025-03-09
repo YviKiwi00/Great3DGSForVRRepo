@@ -7,6 +7,7 @@ from services.jobs_service import (load_jobs,
 from utils.jobs_utils import (log_file_and_console,
                               RESULTS_DIR)
 
+# ===== Segmentation Preparation ===== #
 def run_segmentation_preparation(job_id: str):
     jobs = load_jobs()
     if "running" in jobs[job_id]["status"]:
@@ -17,11 +18,11 @@ def run_segmentation_preparation(job_id: str):
 
     def worker():
         try:
-            model_path = os.path.join(RESULTS_DIR, f"{job_id}")
+            model_path = os.path.join("../../", RESULTS_DIR, f"{job_id}")
             segmentation_preparation_subprocess(job_id, model_path)
 
             jobs = load_jobs()
-            jobs[job_id]["status"] = "done_segmentation_preparation"
+            jobs[job_id]["status"] = "ready_for_segmentation"
             save_jobs(jobs)
         except Exception as e:
             jobs = load_jobs()
@@ -51,7 +52,8 @@ def segmentation_preparation_subprocess(job_id: str, model_path: str):
         env=env,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
-        text=True
+        text=True,
+        cwd=script_dir
     )
 
     # Log-Streaming Loop
@@ -66,6 +68,8 @@ def segmentation_preparation_subprocess(job_id: str, model_path: str):
 
     log_file_and_console(job_id, f"========== Segmentation Preparation for Job {job_id} finished. ==========\n")
 
+
+# ===== Gaussian Segmentation ===== #
 def run_gaussian_segmentation(job_id: str):
     jobs = load_jobs()
     if "running" in jobs[job_id]["status"]:
@@ -76,8 +80,7 @@ def run_gaussian_segmentation(job_id: str):
 
     def worker():
         try:
-            model_path = os.path.join(RESULTS_DIR, f"{job_id}")
-            gaussian_segmentation_subprocess(job_id, model_path)
+            gaussian_segmentation_subprocess(job_id)
 
             jobs = load_jobs()
             jobs[job_id]["status"] = "done_gaussian_segmentation"
