@@ -14,6 +14,9 @@ function pollJobDetails(jobId) {
         const job = await response.json();
 
         switch (true) {
+            case job.status.includes('done_gaussian_segmentation'):
+                updateButtons(true, true, true, true, true)
+                break;
             case job.status.includes('done'):
                 updateButtons(true, true, true, false, false)
                 break;
@@ -27,9 +30,6 @@ function pollJobDetails(jobId) {
             case job.status.includes('running'):
                 updateButtons(false, false, false, false, false)
                 document.getElementById('segmentationContainer').innerHTML = '';
-                break;
-            case job.status.includes('final_result_ready'):
-                updateButtons(true, true, true, true, true)
                 break;
         }
 

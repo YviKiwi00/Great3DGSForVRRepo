@@ -34,6 +34,8 @@ async function loadPromptImage() {
 
         drawPoint(x, y);
         sendPointToServer(x, y);
+
+        alert('Segmentation-Prompt send! Do not select another prompt till preview is back!');
     };
 }
 
