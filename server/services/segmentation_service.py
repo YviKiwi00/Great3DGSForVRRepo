@@ -22,7 +22,7 @@ def run_segmentation_preparation(job_id: str):
             segmentation_preparation_subprocess(job_id, model_path)
 
             jobs = load_jobs()
-            jobs[job_id]["status"] = "ready_for_segmentation"
+            jobs[job_id]["status"] = "done_segmentation_preparation"
             save_jobs(jobs)
         except Exception as e:
             jobs = load_jobs()

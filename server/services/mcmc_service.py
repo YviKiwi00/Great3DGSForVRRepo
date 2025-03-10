@@ -41,7 +41,7 @@ def mcmc_subprocess(job_id: str, source_path: str, output_path: str):
     env = os.environ.copy()
     env["PYTHONPATH"] = script_dir
 
-    cap_max = str(10000000)
+    cap_max = str(10_000_000)
     scale_reg = str(0.01)
     opacity_reg = str(0.01)
     noise_lr = str(5e5)

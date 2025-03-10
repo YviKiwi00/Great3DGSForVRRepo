@@ -4,3 +4,6 @@
 [submodule "server/great3dgsforvr/SAGS"]
 	path = server/great3dgsforvr/SAGS
 	url = https://github.com/YviKiwi00/SAGS.git
+[submodule "server/great3dgsforvr/Frosting"]
+	path = server/great3dgsforvr/Frosting
+	url = https://github.com/YviKiwi00/Frosting.git

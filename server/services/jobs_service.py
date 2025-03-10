@@ -124,12 +124,11 @@ def confirm_segmentation_for_job(job_id: str):
     if not job:
         raise Exception(f"Job {job_id} not found")
 
-    # Gaussian Segmentation
-    response = requests.post(f"{API_BASE}/jobs/{job_id}/gaussianSegmentation")
-    if response.status_code != 200:
-        raise Exception(f"Gaussian Segmentation failed: {response.text}")
+    thread = threading.Thread(target=process_second_job_batch, args=(job_id,))
+    thread.daemon = True
+    thread.start()
 
-    return response.json()
+    return job_id
 
 def send_final_result_zip(job_id):
     result_zip = os.path.join(RESULTS_DIR, f"final_result_{job_id}.zip")
@@ -160,15 +159,14 @@ async def start_new_job(project_name: str, files: List[UploadFile]) -> str:
     }
     save_jobs(jobs)
 
-    # Start thread in background
-    thread = threading.Thread(target=process_job, args=(job_id, project_folder))
+    thread = threading.Thread(target=process_first_job_batch, args=(job_id,))
     thread.daemon = True
     thread.start()
 
     return job_id
 
-def process_job(job_id: str, folder: str):
-    log_file_and_console(job_id, f"Job {job_id} started for {folder}\n")
+def process_first_job_batch(job_id: str):
+    log_file_and_console(job_id, f"Job {job_id} started for {os.path.join(UPLOAD_DIR, job_id)}\n")
 
     try:
         # COLMAP
@@ -197,3 +195,24 @@ def process_job(job_id: str, folder: str):
             jobs[job_id]["status"] = "failed"
             save_jobs(jobs)
 
+def process_second_job_batch(job_id: str):
+    try:
+        # Gaussian Segmentation
+        response = requests.post(f"{API_BASE}/jobs/{job_id}/gaussianSegmentation")
+        if response.status_code != 200:
+            raise Exception(f"Gaussian Segmentation failed: {response.text}")
+        wait_for_job_status(job_id, API_BASE, "done")
+
+        # Frosting Training
+        response = requests.post(f"{API_BASE}/jobs/{job_id}/frosting")
+        if response.status_code != 200:
+            raise Exception(f"Frosting failed: {response.text}")
+        wait_for_job_status(job_id, API_BASE, "done")
+
+    except Exception as e:
+        log_file_and_console(job_id, f"Error during training: {str(e)}\n")
+
+        jobs = load_jobs()
+        if not "failed" in jobs[job_id]["status"]:
+            jobs[job_id]["status"] = "failed"
+            save_jobs(jobs)

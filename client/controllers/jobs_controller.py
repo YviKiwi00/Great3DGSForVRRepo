@@ -6,6 +6,7 @@ from services.jobs_service import (fetch_jobs_from_server,
                                    trigger_colmap,
                                    trigger_mcmc,
                                    trigger_segmentation_preparation,
+                                   trigger_frosting,
                                    fetch_segment_prompt_image,
                                    send_prompt_to_server,
                                    confirm_segmentation_for_job)
@@ -52,3 +53,7 @@ def send_segmentation_prompt(job_id):
 def confirm_segmentation(job_id):
     confirm_segmentation_for_job(job_id)
     return jsonify({"status": "ok"})
+
+@jobs_blueprint.route('/jobs/<job_id>/frosting', methods=['POST'])
+def start_frosting(job_id):
+    return jsonify(trigger_frosting(job_id))
