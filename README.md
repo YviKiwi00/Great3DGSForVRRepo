@@ -106,9 +106,13 @@ Im Root-Verzeichnis können folgende Befehle für die Installation des Environme
 python install.py
 conda activate Great3DGSForVR
 ```
-<details>
-<summary><span style="font-weight: bold;">Troubleshooting</span></summary>
+</details>
 
+### 3. Troubleshooting
+<details>
+<summary><span style="font-weight: bold;">Hier klicken zum Aufklappen.</span></summary>
+
+#### Fehlende Pakete
 Sollte während eines Jobs ein Fehler auftreten, bei dem sich über fehlende Pakete beschwert wird, kann folgender Befehl ausgeführt werden:
 ```shell
 conda env update --file environment.yml --prune
@@ -116,7 +120,13 @@ conda env update --file environment.yml --prune
 
 Dies installiert nochmal alle Abhängigkeiten der Environment-Variable. Falls auch das nicht hilft, muss ggf. manuell nach dem benötigten Paket geschaut werden und mit pip install <package> installiert werden.
 **Beachte:** Dafür muss sich im richtigen Conda-Environment aufgehalten werden!
-</details>
+
+#### Fehlende Submodules
+Das Repo besitzt verschiedene Links zu Git-Submodules.
+Sollte während des Klonens etwas schief gelaufen sein oder durch einen Branch-Wechsel nicht alle Submodules richtig gepulled sein oder sollte es in der Zwischenzeit Updates zu Submodules gegeben haben, so können diese mit folgendem Befehl im Root-Verzeichnis neu gepulled werden:
+```shell
+git pull --recurse-submodules
+```
 </details>
 
 ## Starten der Anwendung
