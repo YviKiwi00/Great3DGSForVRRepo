@@ -82,7 +82,7 @@ Auch die Installation der passenden CUDA-Toolkit Version kann als Einzelversion 
     
     source .bashrc      # Oder neues Terminal
     ```
-
+    
 </details>
 
 ### 2. Installation des Conda-Environments und aller anderen Module
@@ -106,6 +106,17 @@ Im Root-Verzeichnis können folgende Befehle für die Installation des Environme
 python install.py
 conda activate Great3DGSForVR
 ```
+<details>
+<summary><span style="font-weight: bold;">Troubleshooting</span></summary>
+
+Sollte während eines Jobs ein Fehler auftreten, bei dem sich über fehlende Pakete beschwert wird, kann folgender Befehl ausgeführt werden:
+```shell
+conda env update --file environment.yml --prune
+```
+
+Dies installiert nochmal alle Abhängigkeiten der Environment-Variable. Falls auch das nicht hilft, muss ggf. manuell nach dem benötigten Paket geschaut werden und mit pip install <package> installiert werden.
+**Beachte:** Dafür muss sich im richtigen Conda-Environment aufgehalten werden!
+</details>
 </details>
 
 ## Starten der Anwendung
@@ -132,3 +143,35 @@ Der Server sollte auf einem Rechner mit sehr guter Grafikkarte laufen. Beide Ser
 Das Frontend kann dann über http://localhost:8000/static/html/index.html aufgerufen werden.
 
 ## Nutzung
+Der Client besteht aus einem einfachen HTML-Frontend mit vier Seiten: Upload, Jobs, Job-Details und How-To.
+
+**TODO: README bebildern**
+
+### Upload
+Die Upload-Seite hat zum Ziel, den Bilddatensatz, der verarbeitet werden soll, hochzuladen. Dafür gibt es eine einfache Eingabemaske, in der man im File-System seine Bilder auswählen kann.
+
+**Achtung:** Es gibt momentan keinen Check, der prüft, ob die ausgewählten Dateien ein Bildformat sind.
+
+**Hinweis:** Bei Nutzung des Servers über SSH kann der Upload durch aus ein bisschen dauern, ohne das direkt Feedback kommt. Bitte nur einmal auf den Upload-Button drücken und auf Antwort des Servers warten!
+Sowohl über Erfolg als auch Misserfolg wird im Frontend berichtet!
+
+Ist der Upload erfolgreich verlaufen, wird automatisch auf die Jobs-Seite verlinkt. Man kann allerdings auch über die Navigation manuell die Seiten wechseln.
+
+### Jobs
+Die Jobs-Seite gibt einen Überblick über die vom Server verarbeiteten Jobs, deren Projektname, ID und Status. Bei Klick auf einen der Jobs kommt man in dessen Detail-Ansicht und kann (je nach Status) mit diesem interagieren.
+
+**Hinweis:** Die Job-Tabelle wird momentan nicht nach zuletzt gestartetem Job sortiert. In den allermeisten Fällen wird der Job ganz unten in der Liste sein.
+
+### Job-Detail
+Die Job-Detail-Seite ist wohl die interessanteste, da man hier die Server-Logs verfolgen kann und einzelne Prozesse bei Fehlschlag neustarten kann. Außerdem befindet sich hier das interaktive Punkt-Prompting für die Objektsegmentierung.
+
+**Hinweis:** Wurde ein Punkt-Prompt gesetzt, so sollte auf Antwort des Servers gewartet werden. Bis auf einen Alert gibt es leider keinen Hinweis auf den Fortschritt, die Segmentation-Preview sollte allerdings recht schnell durchgeführt sein.
+
+Ist der Prozess soweit, dass ein Punkt als Prompt zur Segmentierung gesetzt werden kann, sollte auf den Button "Load Segmentation Image" gedrückt werden. Dieses Image ist das erste aus den vorhanden Kameransichten gerenderte Bild der Gaussian-Splatting-Szene. Mit Klick auf das Bild kann ein Punkt gesetzt werden. Der Server generiert darauf hin drei Previews der generierten Maske. Dieser Prozess kann so oft wiederholt werden wie nötig. Ist der Nutzer mit der Masken-Preview zufrieden, kann über "Confirm Segmentation" mit der tatsächlichen Segmentierung der Gaussians gestartet werden.
+
+Nach der Segmentierung läuft automatisch auch das weitere Training mit Frosting ab. Das Endergebnis kann dann über den erscheinenden Button "Download Result" heruntergeladen werden.
+
+### How-To
+How-To ist beinhaltet eine ähnliche Erklärung zum Frontend wie diese README.
+
+**TODO: How-To befüllen**

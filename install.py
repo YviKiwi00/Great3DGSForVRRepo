@@ -9,8 +9,6 @@ if __name__ == '__main__':
     parser.add_argument('--no_sam', action='store_true', help='Skip installation of SAM')
     parser.add_argument('--no_grounding_dino', action='store_true', help='Skip installation of GroundingDINO')
     parser.add_argument('--no_nvdiffrast', action='store_true', help='Skip installation of Nvdiffrast')
-    # parser.add_argument('--no_deva', action='store_true', help='Skip installation of Tracking-Anything-with-DEVA')
-    # parser.add_argument('--no_lama', action='store_true', help='Skip installation of LaMa')
     args = parser.parse_args()
     
     # Create a new conda environment
