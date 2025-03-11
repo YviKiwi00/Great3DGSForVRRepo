@@ -50,7 +50,7 @@ if __name__ == '__main__':
         os.makedirs("sam_ckpt", exist_ok=True)
         os.chdir("sam_ckpt/")
         os.system("wget https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.pth")
-        os.system("git clone git@github.com:facebookresearch/segment-anything.git")
+        os.system("git clone https://github.com/facebookresearch/segment-anything.git")
         os.chdir("segment-anything/")
         os.system("conda run -n Great3DGSForVR pip install -e .")
         print("[INFO] SAM for SAGD installed.")
