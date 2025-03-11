@@ -56,7 +56,7 @@ def get_job_details(job_id: str):
         "log_file": job.get("log_file", "")
     }
 
-def get_job_logs(job_id: str) -> str:
+def get_job_logs(job_id: str):
     jobs = load_jobs()
     job = jobs.get(job_id)
 
@@ -116,7 +116,7 @@ def handle_segmentation_prompt(job_id: str, point: dict):
     # ]
     # previews = [encode_image_as_base64(p) for p in preview_paths]
 
-    return {"previews": previews}
+    return {"job_id": job_id, "previews": previews}
 
 def confirm_segmentation_for_job(job_id: str):
     jobs = load_jobs()
@@ -129,7 +129,7 @@ def confirm_segmentation_for_job(job_id: str):
     thread.daemon = True
     thread.start()
 
-    return job_id
+    return {"job_id": job_id, "status": jobs[job_id]["status"]}
 
 def send_final_result_zip(job_id):
     result_zip = os.path.join(RESULTS_DIR, f"final_result_{job_id}.zip")
@@ -139,7 +139,7 @@ def send_final_result_zip(job_id):
 
     return FileResponse(result_zip, filename=f"{job_id}_result.zip")
 
-async def start_new_job(project_name: str, files: List[UploadFile]) -> str:
+async def start_new_job(project_name: str, files: List[UploadFile]):
     job_id = str(uuid.uuid4())
     project_folder = os.path.join(UPLOAD_DIR, f"{job_id}")
     os.makedirs(project_folder)
@@ -164,7 +164,7 @@ async def start_new_job(project_name: str, files: List[UploadFile]) -> str:
     thread.daemon = True
     thread.start()
 
-    return job_id
+    return {"job_id": job_id, "status": jobs[job_id]["status"]}
 
 def process_first_job_batch(job_id: str):
     log_file_and_console(job_id, f"Job {job_id} started for {os.path.join(UPLOAD_DIR, job_id)}\n")

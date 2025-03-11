@@ -1,5 +1,5 @@
 from fastapi import APIRouter, UploadFile, File, Form
-from fastapi.responses import PlainTextResponse, FileResponse
+from fastapi.responses import PlainTextResponse, FileResponse, JSONResponse
 from typing import List
 from services.jobs_service import (get_all_jobs,
                                    start_new_job,
@@ -14,19 +14,26 @@ router = APIRouter()
 
 @router.get("/jobs")
 def get_jobs():
-    return get_all_jobs()
+    try:
+        return get_all_jobs()
+    except Exception as e:
+        return JSONResponse(content={"error": str(e)}, status_code=500)
 
 @router.post("/jobs/start")
-async def start_job(
-    project_name: str = Form(...),
-    files: List[UploadFile] = File(...)
-):
-    job_id = await start_new_job(project_name, files)
-    return {"job_id": job_id}
+def start_job(project_name: str = Form(...), files: List[UploadFile] = File(...)):
+    try:
+        response = start_new_job(project_name, files)
+        return JSONResponse(content=response, status_code=200)
+    except Exception as e:
+        return JSONResponse(content={"error": str(e)}, status_code=500)
 
 @router.get("/jobs/{job_id}")
 def get_job(job_id: str):
-    return get_job_details(job_id)
+    try:
+        response = get_job_details(job_id)
+        return JSONResponse(content=response, status_code=200)
+    except Exception as e:
+        return JSONResponse(content={"error": str(e)}, status_code=500)
 
 @router.get("/jobs/{job_id}/logs", response_class=PlainTextResponse)
 def get_logs(job_id: str):
@@ -34,15 +41,26 @@ def get_logs(job_id: str):
 
 @router.get("/jobs/{job_id}/segmentationPromptImage")
 def get_segment_prompt_image(job_id: str):
-    return get_prompt_image(job_id)
+    try:
+        return get_prompt_image(job_id)
+    except Exception as e:
+        return JSONResponse(content={"error": str(e)}, status_code=500)
 
 @router.post("/jobs/{job_id}/segmentationPrompt")
 def process_segmentation_prompt(job_id: str, point: dict):
-    return handle_segmentation_prompt(job_id, point)
+    try:
+        response = handle_segmentation_prompt(job_id, point)
+        return JSONResponse(content=response, status_code=200)
+    except Exception as e:
+        return JSONResponse(content={"error": str(e)}, status_code=500)
 
 @router.post("/jobs/{job_id}/confirmSegmentation")
 def confirm_segmentation(job_id: str):
-    return confirm_segmentation_for_job(job_id)
+    try:
+        response = confirm_segmentation_for_job(job_id)
+        return JSONResponse(content=response, status_code=200)
+    except Exception as e:
+        return JSONResponse(content={"error": str(e)}, status_code=500)
 
 @router.get("/jobs/{job_id}/downloadResult")
 def download_result(job_id: str):

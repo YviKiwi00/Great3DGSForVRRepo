@@ -35,6 +35,8 @@ def run_frosting(job_id: str):
 
     threading.Thread(target=worker, daemon=True).start()
 
+    return {"job_id": job_id, "status": jobs[job_id]["status"]}
+
 def frosting_subprocess(job_id: str, source_path: str, output_path: str):
     script_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "great3dgsforvr", "Frosting"))
     script_path = os.path.join(script_dir, "train_full_pipeline.py")

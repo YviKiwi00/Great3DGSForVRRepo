@@ -13,4 +13,4 @@ def handle_image_upload(files, project_name):
     if response.status_code != 200 or "job_id" not in response_data:
         raise Exception(f"Upload to server failed: {response.text}")
 
-    return response_data["job_id"]
+    return response_data

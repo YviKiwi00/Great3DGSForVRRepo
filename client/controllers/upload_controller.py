@@ -11,5 +11,5 @@ def image_upload():
     if not files:
         return jsonify({'error': 'No files uploaded'}), 400
 
-    job_id = handle_image_upload(files, project_name)
-    return jsonify({'job_id': job_id})
+    response = handle_image_upload(files, project_name)
+    return response.json()

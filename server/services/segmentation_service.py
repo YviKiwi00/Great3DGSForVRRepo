@@ -34,6 +34,8 @@ def run_segmentation_preparation(job_id: str):
 
     threading.Thread(target=worker, daemon=True).start()
 
+    return {"job_id": job_id, "status": jobs[job_id]["status"]}
+
 def segmentation_preparation_subprocess(job_id: str, model_path: str):
     script_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "great3dgsforvr", "SAGS"))
     script_path = os.path.join(script_dir, "prepare_segmentation.py")
@@ -104,6 +106,8 @@ def run_gaussian_segmentation(job_id: str):
             log_file_and_console(job_id, f"Error in Gaussian Segmentation: {str(e)}\n")
 
     threading.Thread(target=worker, daemon=True).start()
+
+    return {"job_id": job_id, "status": jobs[job_id]["status"]}
 
 def gaussian_segmentation_subprocess(job_id: str, model_path: str):
     script_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "great3dgsforvr", "SAGS"))

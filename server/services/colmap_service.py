@@ -33,6 +33,8 @@ def run_colmap(job_id: str):
 
     threading.Thread(target=worker, daemon=True).start()
 
+    return {"job_id": job_id, "status": jobs[job_id]["status"]}
+
 def colmap_subprocess(job_id: str, source_path: str, resize: bool = False):
     script_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "great3dgsforvr", "3dgs-mcmc"))
     script_path = os.path.join(script_dir, "convert.py")
