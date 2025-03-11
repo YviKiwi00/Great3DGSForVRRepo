@@ -151,6 +151,8 @@ async function startFrosting() {
 }
 
 async function downloadResult() {
+    alert('Download started, could take a while over SSH!')
+
     const response = await fetch(`/jobs/${jobId}/download`, { method: 'GET' });
 
     if (!response.ok) {
