@@ -78,7 +78,7 @@ if __name__ == '__main__':
         print("[INFO] Installing Nvdiffrast...")
         os.system("git clone https://github.com/NVlabs/nvdiffrast")
         os.chdir("nvdiffrast")
-        os.system("conda run -n frosting pip install .")
+        os.system("conda run -n Great3DGSForVR pip install .")
         print("[INFO] Nvdiffrast installed.")
         print(
             "[INFO] Please note that Nvdiffrast will take a few seconds or minutes to build the first time it is used.")
