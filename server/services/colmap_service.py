@@ -1,6 +1,7 @@
 import threading
 import subprocess
 import os
+from datetime import datetime
 
 from services.jobs_service import (load_jobs,
                                    save_jobs)
@@ -47,7 +48,10 @@ def colmap_subprocess(job_id: str, source_path: str, resize: bool = False):
     if resize:
         cmd.append("--resize")
 
-    log_file_and_console(job_id, "========== Starting Colmap-Conversion for Job {job_id} ==========\n")
+    log_file_and_console(job_id, f"========== Starting Colmap-Conversion for Job {job_id} ==========\n")
+
+    start_time = datetime.now()
+    log_file_and_console(job_id, f"===== Start-Time: {start_time} =====\n")
 
     process = subprocess.Popen(
         cmd,
@@ -62,6 +66,11 @@ def colmap_subprocess(job_id: str, source_path: str, resize: bool = False):
         log_file_and_console(job_id, line)
 
     exit_code = process.wait()
+
+    end_time = datetime.now()
+    duration = end_time - start_time
+
+    log_file_and_console(job_id, f"===== End-Time: {end_time}; Duration: {duration} =====\n")
 
     if exit_code != 0:
         log_file_and_console(job_id, "Colmap Conversion failed with code {exit_code}\n")

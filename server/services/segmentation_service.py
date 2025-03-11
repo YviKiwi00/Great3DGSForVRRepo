@@ -1,6 +1,7 @@
 import threading
 import subprocess
 import os
+from datetime import datetime
 
 from services.jobs_service import (load_jobs,
                                    save_jobs)
@@ -46,7 +47,10 @@ def segmentation_preparation_subprocess(job_id: str, model_path: str):
         "--model_path", model_path
     ]
 
-    log_file_and_console(job_id, "========== Starting Segmentation Preparation for Job {job_id} ==========\n")
+    log_file_and_console(job_id, f"========== Starting Segmentation Preparation for Job {job_id} ==========\n")
+
+    start_time = datetime.now()
+    log_file_and_console(job_id, f"===== Start-Time: {start_time} =====\n")
 
     process = subprocess.Popen(
         cmd,
@@ -62,6 +66,11 @@ def segmentation_preparation_subprocess(job_id: str, model_path: str):
         log_file_and_console(job_id, line)
 
     exit_code = process.wait()
+
+    end_time = datetime.now()
+    duration = end_time - start_time
+
+    log_file_and_console(job_id, f"===== End-Time: {end_time}; Duration: {duration} =====\n")
 
     if exit_code != 0:
         log_file_and_console(job_id, "Segmentation Preparation failed with code {exit_code}\n")
@@ -109,7 +118,10 @@ def gaussian_segmentation_subprocess(job_id: str, model_path: str):
         "--model_path", model_path
     ]
 
-    log_file_and_console(job_id, "========== Starting Gaussian Segmentation for Job {job_id} ==========\n")
+    log_file_and_console(job_id, f"========== Starting Gaussian Segmentation for Job {job_id} ==========\n")
+
+    start_time = datetime.now()
+    log_file_and_console(job_id, f"===== Start-Time: {start_time} =====\n")
 
     process = subprocess.Popen(
         cmd,
@@ -124,6 +136,11 @@ def gaussian_segmentation_subprocess(job_id: str, model_path: str):
         log_file_and_console(job_id, line)
 
     exit_code = process.wait()
+
+    end_time = datetime.now()
+    duration = end_time - start_time
+
+    log_file_and_console(job_id, f"===== End-Time: {end_time}; Duration: {duration} =====\n")
 
     if exit_code != 0:
         log_file_and_console(job_id, "Gaussian Segmentation failed with code {exit_code}\n")

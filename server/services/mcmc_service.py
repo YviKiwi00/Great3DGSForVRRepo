@@ -1,6 +1,7 @@
 import threading
 import subprocess
 import os
+from datetime import datetime
 
 from services.jobs_service import (load_jobs,
                                    save_jobs)
@@ -60,6 +61,9 @@ def mcmc_subprocess(job_id: str, source_path: str, output_path: str):
 
     log_file_and_console(job_id, f"========== Starting first 7000 Iterations of 3DGS-MCMC Training for Job {job_id} ==========\n")
 
+    start_time = datetime.now()
+    log_file_and_console(job_id, f"===== Start-Time: {start_time} =====\n")
+
     process = subprocess.Popen(
         cmd,
         env=env,
@@ -73,6 +77,11 @@ def mcmc_subprocess(job_id: str, source_path: str, output_path: str):
         log_file_and_console(job_id, line)
 
     exit_code = process.wait()
+
+    end_time = datetime.now()
+    duration = end_time - start_time
+
+    log_file_and_console(job_id, f"===== End-Time: {end_time}; Duration: {duration} =====\n")
 
     if exit_code != 0:
         log_file_and_console(job_id, f"3DGS-MCMC Training failed with code {exit_code}\n")

@@ -108,6 +108,7 @@ def handle_segmentation_prompt(job_id: str, point: dict):
 
     previews = json.loads(result.stdout.strip())
 
+    # Dummies if needed!
     # preview_paths = [
     #     "static/dummy1.jpg",
     #     "static/dummy2.jpg",
