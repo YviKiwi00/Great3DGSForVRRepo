@@ -139,7 +139,7 @@ def send_final_result_zip(job_id):
 
     return FileResponse(result_zip, filename=f"{job_id}_result.zip")
 
-async def start_new_job(project_name: str, files: List[UploadFile]):
+def start_new_job(project_name: str, files: List[UploadFile]):
     job_id = str(uuid.uuid4())
     project_folder = os.path.join(UPLOAD_DIR, f"{job_id}")
     os.makedirs(project_folder)
