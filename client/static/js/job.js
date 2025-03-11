@@ -61,7 +61,7 @@ function pollJobDetails(jobId) {
             <p><strong>Status:</strong> ${job.status}</p>
         `;
 
-        setTimeout(fetchAndUpdateDetails, 5000);  // alle 5 Sekunden
+        setTimeout(fetchAndUpdateDetails, 5000);
     }
 
     fetchAndUpdateDetails()
@@ -73,11 +73,14 @@ function pollJobLog(jobId) {
         const logText = await response.text();
 
         const logElement = document.getElementById("jobLog");
+        const isScrolledToBottom = logElement.scrollHeight - logElement.scrollTop <= logElement.clientHeight + 5;
         logElement.innerText = logText;
 
-        logElement.scrollTop = logElement.scrollHeight;
+        if (isScrolledToBottom) {
+            logElement.scrollTop = logElement.scrollHeight;
+        }
 
-        setTimeout(fetchAndUpdateLog, 5000);  // alle 5 Sekunden
+        setTimeout(fetchAndUpdateLog, 5000);
     }
 
     fetchAndUpdateLog();
