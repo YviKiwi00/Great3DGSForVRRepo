@@ -150,7 +150,20 @@ async function startFrosting() {
     alert('Frosting-Process started!');
 }
 
-function downloadResult() {
-    const jobId = new URLSearchParams(window.location.search).get('id');
-    window.location.href = `/jobs/${jobId}/downloadResult`;
+async function downloadResult() {
+    const response = await fetch(`/jobs/${jobId}/download`, { method: 'GET' });
+
+    if (!response.ok) {
+        console.error("Download request failed.");
+        return;
+    }
+
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${jobId}_result.zip`;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
 }

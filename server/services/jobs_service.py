@@ -131,13 +131,19 @@ def confirm_segmentation_for_job(job_id: str):
 
     return {"job_id": job_id, "status": jobs[job_id]["status"]}
 
-def send_final_result_zip(job_id):
-    result_zip = os.path.join(RESULTS_DIR, f"final_result_{job_id}.zip")
+def send_final_result_zip(job_id: str):
+    job_result_folder = os.path.join(RESULTS_DIR, job_id)
+    result_zip = os.path.join(RESULTS_DIR, f"{job_id}_result.zip")
 
-    if not os.path.exists(result_zip):
-        raise Exception(f"Result ZIP for job {job_id} not found")
+    if os.path.exists(result_zip):
+        os.remove(result_zip)
 
-    return FileResponse(result_zip, filename=f"{job_id}_result.zip")
+    if not os.path.exists(job_result_folder):
+        raise Exception(f"Result folder for job {job_id} not found at {job_result_folder}")
+
+    shutil.make_archive(result_zip[:-4], 'zip', job_result_folder)
+
+    return FileResponse(result_zip, filename=f"{job_id}_result.zip", media_type='application/zip')
 
 def start_new_job(project_name: str, files: List[UploadFile]):
     job_id = str(uuid.uuid4())

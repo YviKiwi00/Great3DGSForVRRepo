@@ -1,4 +1,5 @@
 import requests
+from flask import jsonify
 
 API_BASE = "http://localhost:5000"
 
@@ -61,3 +62,15 @@ def trigger_frosting(job_id):
     if response.status_code != 200:
         raise Exception(f"Failed to start Frosting for job {job_id}: {response.text}")
     return response.json()
+
+def download_result(job_id):
+    response = requests.get(f"{API_BASE}/jobs/{job_id}/downloadResult")
+
+    if response.status_code != 200:
+        return jsonify({"error": f"Failed to download result for job {job_id}: {response.text}"}), 500
+
+    return response.content, response.status_code, {
+        "Content-Type": response.headers["Content-Type"],
+        "Content-Disposition": response.headers.get("Content-Disposition",
+                                                    f'attachment; filename="{job_id}_result.zip"')
+    }

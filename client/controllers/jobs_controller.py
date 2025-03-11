@@ -9,7 +9,8 @@ from services.jobs_service import (fetch_jobs_from_server,
                                    trigger_frosting,
                                    fetch_segment_prompt_image,
                                    send_prompt_to_server,
-                                   confirm_segmentation_for_job)
+                                   confirm_segmentation_for_job,
+                                   download_result)
 
 jobs_blueprint = Blueprint('jobs', __name__)
 
@@ -57,3 +58,7 @@ def confirm_segmentation(job_id):
 @jobs_blueprint.route('/jobs/<job_id>/frosting', methods=['POST'])
 def start_frosting(job_id):
     return jsonify(trigger_frosting(job_id))
+
+@jobs_blueprint.route('/jobs/<job_id>/download', methods=['GET'])
+def download_final_result(job_id):
+    return download_result(job_id)
