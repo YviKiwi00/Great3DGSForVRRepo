@@ -15,7 +15,7 @@ def encode_image_as_base64(filepath):
     with open(filepath, "rb") as f:
         return base64.b64encode(f.read()).decode('utf-8')
 
-def wait_for_job_status(job_id, api_base, target_status, timeout=600):
+def wait_for_job_status(job_id, api_base, target_status, timeout=14400): # 4 Stunden
     start_time = time.time()
     while time.time() - start_time < timeout:
         response = requests.get(f"{api_base}/jobs/{job_id}")

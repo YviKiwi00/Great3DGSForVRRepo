@@ -208,7 +208,6 @@ def process_second_job_batch(job_id: str):
         response = requests.post(f"{API_BASE}/jobs/{job_id}/frosting")
         if response.status_code != 200:
             raise Exception(f"Frosting failed: {response.text}")
-        wait_for_job_status(job_id, API_BASE, "done")
 
     except Exception as e:
         log_file_and_console(job_id, f"Error during training: {str(e)}\n")
