@@ -50,7 +50,18 @@ function pollJobDetails(jobId) {
                 document.getElementById('segmentationContainer').innerHTML = '';
                 break;
             case job.status.includes('running'):
-                updateButtons(false, false, false, false, false)
+                updateButtons(false, false, false, false, false, false)
+                document.getElementById('segmentationContainer').innerHTML = '';
+                break;
+            case job.status.includes('failed'):
+                updateButtons(true, true, true, true, true, true)
+                document.getElementById('segmentationContainer').innerHTML = '';
+                break;
+            case job.status.includes('removed_job_queue'):
+                updateButtons(true, true, true, true, true, true)
+                document.getElementById('segmentationContainer').innerHTML = '';
+                break;
+            case job.status.includes('job_queued'):
                 document.getElementById('segmentationContainer').innerHTML = '';
                 break;
         }
@@ -59,6 +70,7 @@ function pollJobDetails(jobId) {
             <p><strong>Job-ID:</strong> ${job.id}</p>
             <p><strong>Projektname:</strong> ${job.project_name}</p>
             <p><strong>Status:</strong> ${job.status}</p>
+            <p><strong>Queued Processes:</strong> ${job.queued_processes}</p>
         `;
 
         setTimeout(fetchAndUpdateDetails, 5000);
@@ -103,55 +115,51 @@ function updateButtons(colmap, mcmc, segPrep, segmentation, frosting, download) 
 }
 
 async function startColmap() {
-    const response = await fetch(`/jobs/${jobId}`);
-    const job = await response.json();
+    const response = await fetch(`/jobs/${jobId}/colmap`, {method: 'POST'});
 
-    if (job.status.includes('running')) {
-        alert('There is still a Job running, please wait.');
+    if (!response.ok){
+        alert("Something went wrong on queueing Colmap-Process!");
         return;
     }
-    await fetch(`/jobs/${jobId}/colmap`, {method: 'POST'});
-    alert('Colmap-Process started!');
+
+    alert('Colmap-Process queued!');
 }
 
 async function startMCMC() {
-    const response = await fetch(`/jobs/${jobId}`);
-    const job = await response.json();
+    const response = await fetch(`/jobs/${jobId}/mcmc`, {method: 'POST'});
 
-    if (job.status.includes('running')) {
-        alert('There is still a Job running, please wait.');
+    if (!response.ok){
+        alert("Something went wrong on queueing MCMC-Process!");
         return;
     }
-    await fetch(`/jobs/${jobId}/mcmc`, {method: 'POST'});
-    alert('MCMC-Process started!');
+
+    alert('MCMC-Process queued!');
 }
 
 async function startSegPrep() {
-    const response = await fetch(`/jobs/${jobId}`);
-    const job = await response.json();
+    const response = await fetch(`/jobs/${jobId}/segmentationPreparation`, {method: 'POST'});
 
-    if (job.status.includes('running')) {
-        alert('There is still a Job running, please wait.');
+    if (!response.ok){
+        alert("Something went wrong on queueing Segmentation_Preparation-Process!");
         return;
     }
-    await fetch(`/jobs/${jobId}/segmentationPreparation`, {method: 'POST'});
-    alert('Segmentation_Preparation-Process started!');
+
+    alert('Segmentation_Preparation-Process queued!');
 }
 
 async function startFrosting() {
-    const response = await fetch(`/jobs/${jobId}`);
-    const job = await response.json();
+    const response = await fetch(`/jobs/${jobId}/frosting`, {method: 'POST'});
 
-    if (job.status.includes('running')) {
-        alert('There is still a Job running, please wait.');
+    if (!response.ok){
+        alert("Something went wrong on queueing Frosting-Process!");
         return;
     }
-    await fetch(`/jobs/${jobId}/frosting`, {method: 'POST'});
-    alert('Frosting-Process started!');
+
+    alert('Frosting-Process queued!');
 }
 
 async function downloadResult() {
-    alert('Download started, could take a while over SSH!')
+    alert('Download started, could take a while over SSH, please be patient!')
 
     const response = await fetch(`/jobs/${jobId}/download`, { method: 'GET' });
 

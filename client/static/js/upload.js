@@ -33,9 +33,6 @@ function startUpload() {
     .then(data => {
         if (data.job_id) {
             document.getElementById('uploadStatus').innerText = `Upload erfolgreich! Job-ID: ${data.job_id}`;
-            setTimeout(() => {
-                window.location.href = `jobs.html`;
-            }, 2000);
         } else {
             document.getElementById('uploadStatus').innerText = "Upload fehlgeschlagen.";
         }

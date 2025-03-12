@@ -12,4 +12,4 @@ def image_upload():
         return jsonify({'error': 'No files uploaded'}), 400
 
     response = handle_image_upload(files, project_name)
-    return response.json()
+    return jsonify(response)

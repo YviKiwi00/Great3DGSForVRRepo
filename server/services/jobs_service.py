@@ -2,7 +2,6 @@ import os
 import uuid
 import shutil
 import json
-import threading
 import requests
 import subprocess
 
@@ -14,7 +13,6 @@ from utils.jobs_utils import ( API_BASE,
                                LOGS_DIR,
                                RESULTS_DIR,
                                JOBS_FILE,
-                               wait_for_job_status,
                                log_file_and_console )
 
 os.makedirs(UPLOAD_DIR, exist_ok=True)
@@ -53,6 +51,7 @@ def get_job_details(job_id: str):
         "id": job_id,
         "project_name": job["project_name"],
         "status": job["status"],
+        "queued_processes": job["queued_processes"],
         "log_file": job.get("log_file", "")
     }
 
@@ -125,9 +124,7 @@ def confirm_segmentation_for_job(job_id: str):
     if not job:
         raise Exception(f"Job {job_id} not found")
 
-    thread = threading.Thread(target=process_second_job_batch, args=(job_id,))
-    thread.daemon = True
-    thread.start()
+    process_second_job_batch(job_id)
 
     return {"job_id": job_id, "status": jobs[job_id]["status"]}
 
@@ -162,13 +159,12 @@ def start_new_job(project_name: str, files: List[UploadFile]):
     jobs[job_id] = {
         "project_name": project_name,
         "status": "started",
+        "queued_processes": 0,
         "log_file": os.path.join(LOGS_DIR, f"{job_id}.log")
     }
     save_jobs(jobs)
 
-    thread = threading.Thread(target=process_first_job_batch, args=(job_id,))
-    thread.daemon = True
-    thread.start()
+    process_first_job_batch(job_id)
 
     return {"job_id": job_id, "status": jobs[job_id]["status"]}
 
@@ -180,22 +176,19 @@ def process_first_job_batch(job_id: str):
         response = requests.post(f"{API_BASE}/jobs/{job_id}/colmap")
         if response.status_code != 200:
             raise Exception(f"Colmap failed: {response.text}")
-        wait_for_job_status(job_id, API_BASE, "done")
 
         # 3DGS MCMC Training
         response = requests.post(f"{API_BASE}/jobs/{job_id}/mcmc")
         if response.status_code != 200:
             raise Exception(f"MCMC failed: {response.text}")
-        wait_for_job_status(job_id, API_BASE, "done")
 
         # Segmentation Preparation
         response = requests.post(f"{API_BASE}/jobs/{job_id}/segmentationPreparation")
         if response.status_code != 200:
             raise Exception(f"Segmentation Preparation failed: {response.text}")
-        wait_for_job_status(job_id, API_BASE, "done")
 
     except Exception as e:
-        log_file_and_console(job_id, f"Error during training: {str(e)}\n")
+        log_file_and_console(job_id, f"Error during first Batch: {str(e)}\n")
 
         jobs = load_jobs()
         if not "failed" in jobs[job_id]["status"]:
@@ -208,7 +201,6 @@ def process_second_job_batch(job_id: str):
         response = requests.post(f"{API_BASE}/jobs/{job_id}/gaussianSegmentation")
         if response.status_code != 200:
             raise Exception(f"Gaussian Segmentation failed: {response.text}")
-        wait_for_job_status(job_id, API_BASE, "done")
 
         # Frosting Training
         response = requests.post(f"{API_BASE}/jobs/{job_id}/frosting")
@@ -216,7 +208,7 @@ def process_second_job_batch(job_id: str):
             raise Exception(f"Frosting failed: {response.text}")
 
     except Exception as e:
-        log_file_and_console(job_id, f"Error during training: {str(e)}\n")
+        log_file_and_console(job_id, f"Error during second Batch: {str(e)}\n")
 
         jobs = load_jobs()
         if not "failed" in jobs[job_id]["status"]:

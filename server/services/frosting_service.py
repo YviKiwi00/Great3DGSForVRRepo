@@ -1,4 +1,3 @@
-import threading
 import subprocess
 import os
 from datetime import datetime
@@ -8,41 +7,26 @@ from services.jobs_service import (load_jobs,
 from utils.jobs_utils import (log_file_and_console,
                               UPLOAD_DIR,
                               RESULTS_DIR)
+from jobs_queue import enqueue_job
 
 def run_frosting(job_id: str):
     jobs = load_jobs()
-    if "running" in jobs[job_id]["status"]:
-        raise Exception(f"Job {job_id} is running a process already!")
-
-    jobs[job_id]["status"] = "running_frosting"
+    jobs[job_id]["status"] = "job_queued"
     save_jobs(jobs)
 
-    def worker():
-        try:
-            source_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", f"{UPLOAD_DIR}", f"{job_id}"))
-            output_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", f"{RESULTS_DIR}", f"{job_id}"))
-            frosting_subprocess(job_id, source_path, output_path)
-
-            jobs = load_jobs()
-            jobs[job_id]["status"] = "done_frosting"
-            save_jobs(jobs)
-        except Exception as e:
-            jobs = load_jobs()
-            jobs[job_id]["status"] = "failed_frosting"
-            save_jobs(jobs)
-
-            log_file_and_console(job_id, f"Error in Frosting: {str(e)}\n")
-
-    threading.Thread(target=worker, daemon=True).start()
+    enqueue_job(job_id, frosting_subprocess, "FROSTING")
 
     return {"job_id": job_id, "status": jobs[job_id]["status"]}
 
-def frosting_subprocess(job_id: str, source_path: str, output_path: str):
+def frosting_subprocess(job_id: str):
     script_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "great3dgsforvr", "Frosting"))
     script_path = os.path.join(script_dir, "train_full_pipeline.py")
 
     env = os.environ.copy()
     env["PYTHONPATH"] = script_dir
+
+    source_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", f"{UPLOAD_DIR}", f"{job_id}"))
+    output_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", f"{RESULTS_DIR}", f"{job_id}"))
 
     export_obj = str(True)
     use_occlusion_culling = str(False)
@@ -58,6 +42,10 @@ def frosting_subprocess(job_id: str, source_path: str, output_path: str):
         "--regularization_type", regularization_type,
         "--gaussians_in_frosting", gaussians_in_frosting,
     ]
+
+    jobs = load_jobs()
+    jobs[job_id]["status"] = "running_frosting"
+    save_jobs(jobs)
 
     log_file_and_console(job_id, f"========== Starting Frosting Training for Job {job_id} ==========\n")
 
@@ -85,7 +73,14 @@ def frosting_subprocess(job_id: str, source_path: str, output_path: str):
     log_file_and_console(job_id, f"===== End-Time: {end_time}; Duration: {duration} =====\n")
 
     if exit_code != 0:
+        jobs = load_jobs()
+        jobs[job_id]["status"] = "failed_frosting"
+        save_jobs(jobs)
         log_file_and_console(job_id, f"Frosting Training failed with code {exit_code}\n")
         raise Exception(f"Frosting Training failed with code {exit_code}")
+
+    jobs = load_jobs()
+    jobs[job_id]["status"] = "done_frosting"
+    save_jobs(jobs)
 
     log_file_and_console(job_id, f"========== Frosting Training for Job {job_id} finished. ==========\n")

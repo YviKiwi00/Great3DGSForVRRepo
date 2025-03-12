@@ -69,9 +69,8 @@ function showPreviews(previews) {
 
 async function confirmSegmentation() {
     const response = await fetch(`/jobs/${jobId}/confirmSegmentation`, {method: 'POST'});
-    const result = await response.json();
 
-    if (result.status === "ok") {
+    if (response.ok) {
         alert("Segmentierung bestätigt!");
         document.getElementById('confirmButton').style.display = 'none';
         document.getElementById('previewContainer').innerHTML = '';

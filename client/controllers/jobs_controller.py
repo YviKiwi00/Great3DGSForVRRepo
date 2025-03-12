@@ -16,18 +16,15 @@ jobs_blueprint = Blueprint('jobs', __name__)
 
 @jobs_blueprint.route('/jobs', methods=['GET'])
 def list_jobs():
-    jobs = fetch_jobs_from_server()
-    return jsonify(jobs)
+    return jsonify(fetch_jobs_from_server())
 
 @jobs_blueprint.route('/jobs/<job_id>', methods=['GET'])
 def get_job_details(job_id):
-    job_details = fetch_job_details(job_id)
-    return jsonify(job_details)
+    return jsonify(fetch_job_details(job_id))
 
 @jobs_blueprint.route('/jobs/<job_id>/logs', methods=['GET'])
 def get_job_logs(job_id):
-    logs = fetch_job_logs(job_id)
-    return logs
+    return fetch_job_logs(job_id)
 
 @jobs_blueprint.route('/jobs/<job_id>/colmap', methods=['POST'])
 def start_colmap(job_id):
@@ -52,8 +49,7 @@ def send_segmentation_prompt(job_id):
 
 @jobs_blueprint.route('/jobs/<job_id>/confirmSegmentation', methods=['POST'])
 def confirm_segmentation(job_id):
-    confirm_segmentation_for_job(job_id)
-    return jsonify({"status": "ok"})
+    return jsonify(confirm_segmentation_for_job(job_id))
 
 @jobs_blueprint.route('/jobs/<job_id>/frosting', methods=['POST'])
 def start_frosting(job_id):
