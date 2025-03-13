@@ -26,13 +26,12 @@ def colmap_subprocess(job_id: str):
 
     source_path = os.path.join(UPLOAD_DIR, f"{job_id}")
 
-    camera = "OPENCV"
+    camera = "PINHOLE"
 
     cmd = [
         "python", script_path,
         "--source_path", source_path,
         "--camera", camera,
-        "--resize"
     ]
 
     jobs = load_jobs()
