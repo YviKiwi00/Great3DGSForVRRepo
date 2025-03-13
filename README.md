@@ -133,24 +133,60 @@ git pull --recurse-submodules
 Das Repo ist aufgebaut in einen Client und einen Server. Der Client bietet ein einfaches Frontend zum Hochladen von Bilddatensätzen und schickt Anfragen an den Server zum Durchführen der Berechnungen. Der Client kann nach Hochladen auch gestoppt werden und je nach Bedarf wieder gestartet. Dieser holt sich Informationen zum Stand der Berechnungen beim Server ab.
 Der Server sollte auf einem Rechner mit sehr guter Grafikkarte laufen. Beide Services können aber auch lokal auf dem selbem Rechner gestartet und ausgeführt werden.
 
-**Starten des Servers:**
+### Server - Lokal
+Den Server lokal zu starten ist die einfachste Möglichkeit und benötigt keine extra SSH-Verbindung:
 ```shell 
   cd server
   PYTHONPATH=. python server.py
 ```
 
-**Umleiten des Ports über SSH-Verbindung (falls Server auf anderem Rechner läuft):**
+### Server - Über SSH
+Es kann nötig sein, die Server-Seite des Repo's auf einem Rechner zu starten, der ggf. bessere Hardware hat. Kann man sich über SSH auf diesen Rechner verbinden, sind folgende Schritte zu beachten:
+
+**SSH-Verbindung mit Port-Tunnel aufbauen:**
 ```shell 
   ssh -L 5000:localhost:5000 <username>@<ssh-adress>
 ```
+Die Verbindung über SSH mit einem Port-Tunnel für Port 5000 ist notwendig, damit der Client auf dem lokalen Rechner eine Verbindung zum Server über Port 5000 aufbauen kann.
+Die SSH-Verbindung kann auch ohne Tunnel gestartet werden, falls der Client nicht auf den Server zugreifen soll:
+```shell 
+  ssh <username>@<ssh-adress>
+```
 
-**Starten des Clients:**
+Es bietet sich an, den Server in einer Session im Hintergrund ausführen zu können, damit man nicht ständig die SSH-Verbindung aufrecht erhalten muss.
+Dafür kann bspw. tmux genutzt werden:
+
+**Server im Hintergrund starten (mit tmux):**
+```shell
+  tmux new -s great3dgsforvr_server
+  conda activate Great3DGSForVR
+  PYTHONPATH=. python server.py
+```
+Zum Ausklinken aus der tmux-Sitzung, ohne den Server zu beenden: `CTRL+B` und danach `D`.
+
+Zum Einklinken in die tmux-Sitzung:
+```shell
+  tmux attach -t great3dgsforvr_server
+```
+Der Server kann innerhalb der Sitzung standardmäßig mit `CTRL+C` geschlossen werden.
+
+Weitere tmux-Befehle:
+```shell
+  tmux list-sessions                    # Alle aktiven Sessions auflisten
+  tmux kill-session -t <session_id>     # Eine Session (von außerhalb) beenden
+  tmux kill-session -t <session-name>
+  tmux kill-server                      # Alle tmux-Sessions beenden
+  tmux kill-session                     # Eine Session (innerhalb) beenden
+  exit
+```
+
+### Client
 ```shell 
   cd client
   PYTHONPATH=. python client.py
 ```
 
-Das Frontend kann dann über http://localhost:8000/static/html/index.html aufgerufen werden.
+Das Frontend kann über http://localhost:8000/static/html/index.html aufgerufen werden.
 
 ## Nutzung
 Der Client besteht aus einem einfachen HTML-Frontend mit vier Seiten: Upload, Jobs, Job-Details und How-To.
