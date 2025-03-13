@@ -11,7 +11,7 @@ from jobs_queue import enqueue_job
 
 def run_mcmc(job_id: str):
     jobs = load_jobs()
-    jobs[job_id]["status"] += "job_queued"
+    jobs[job_id]["status"] = "job_queued"
     save_jobs(jobs)
 
     enqueue_job(job_id, mcmc_subprocess, "MCMC")
