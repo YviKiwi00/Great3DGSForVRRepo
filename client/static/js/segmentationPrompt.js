@@ -47,6 +47,7 @@ function drawPoint(x, y) {
 }
 
 async function sendPointToServer(x, y) {
+    clearPreviews();
     const response = await fetch(`/jobs/${jobId}/segmentationPrompt`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
@@ -57,14 +58,22 @@ async function sendPointToServer(x, y) {
 }
 
 function showPreviews(previews) {
+    clearPreviews();
+    console.log("Showing Previews!");
     const container = document.getElementById('previewContainer');
-    container.innerHTML = '';
     previews.forEach((base64, index) => {
         const img = new Image();
         img.src = `data:image/png;base64,${base64}`;
         container.appendChild(img);
     });
     document.getElementById('confirmButton').style.display = 'block';
+}
+
+function clearPreviews() {
+    console.log("Clearing Previews!");
+    const container = document.getElementById('previewContainer');
+    container.innerHTML = '';
+    document.getElementById('confirmButton').style.display = 'none';
 }
 
 async function confirmSegmentation() {
