@@ -74,7 +74,7 @@ def get_job_logs(job_id: str):
     return "".join(tail)
 
 def get_prompt_image(job_id: str):
-    image_file = os.path.join(os.path.dirname(__file__), "..", "great3dgsforvr", "SAGS", "render_images", f"render_image_{job_id}.png")
+    image_file = os.path.join(os.path.dirname(__file__), "..", "great3dgsforvr", "SAGS", "render_images", f"{job_id}", "render_image_0.png")
     return FileResponse(image_file)
 
 def handle_segmentation_prompt(job_id: str, point: dict):
