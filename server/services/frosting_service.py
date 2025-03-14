@@ -27,7 +27,10 @@ def frosting_whole_subprocess(job_id: str):
     env["PYTHONPATH"] = script_dir
 
     source_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", f"{UPLOAD_DIR}", f"{job_id}"))
-    output_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", f"{RESULTS_DIR}", f"{job_id}"))
+    gs_output_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", f"{RESULTS_DIR}", f"{job_id}"))
+    results_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", f"{RESULTS_DIR}", f"{job_id}", "frosting", "whole"))
+
+    os.makedirs(results_dir, exist_ok=True)
 
     ply_name = "point_cloud.ply"
 
@@ -39,7 +42,8 @@ def frosting_whole_subprocess(job_id: str):
     cmd = [
         "python", script_path,
         "--scene_path", source_path,
-        "--gs_output_dir", output_path,
+        "--gs_output_dir", gs_output_dir,
+        "--results_dir", results_dir,
         "--ply_name", ply_name,
         "--export_obj", export_obj,
         "--use_occlusion_culling", use_occlusion_culling,
@@ -97,7 +101,10 @@ def frosting_seg_subprocess(job_id: str):
     env["PYTHONPATH"] = script_dir
 
     source_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", f"{UPLOAD_DIR}", f"{job_id}"))
-    output_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", f"{RESULTS_DIR}", f"{job_id}"))
+    gs_output_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", f"{RESULTS_DIR}", f"{job_id}"))
+    results_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", f"{RESULTS_DIR}", f"{job_id}", "frosting", "segmented"))
+
+    os.makedirs(results_dir, exist_ok=True)
 
     ply_name = "point_cloud_seg_gd.ply"
 
@@ -109,7 +116,8 @@ def frosting_seg_subprocess(job_id: str):
     cmd = [
         "python", script_path,
         "--scene_path", source_path,
-        "--gs_output_dir", output_path,
+        "--gs_output_dir", gs_output_dir,
+        "--results_dir", results_dir,
         "--ply_name", ply_name,
         "--export_obj", export_obj,
         "--use_occlusion_culling", use_occlusion_culling,
