@@ -10,6 +10,7 @@ UPLOAD_DIR = os.path.join(STORAGE_DIR, "uploads")
 LOGS_DIR = os.path.join(STORAGE_DIR, "logs")
 RESULTS_DIR = os.path.join(STORAGE_DIR, "results")
 JOBS_FILE = os.path.join(STORAGE_DIR, "jobs.json")
+LOCK_FILE = JOBS_FILE + ".lock"
 
 def encode_image_as_base64(filepath):
     with open(filepath, "rb") as f:

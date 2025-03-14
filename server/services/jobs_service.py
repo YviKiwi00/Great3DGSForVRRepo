@@ -5,6 +5,7 @@ import json
 import requests
 import subprocess
 
+from filelock import FileLock
 from typing import List
 from fastapi import UploadFile
 from fastapi.responses import FileResponse
@@ -13,6 +14,7 @@ from utils.jobs_utils import ( API_BASE,
                                LOGS_DIR,
                                RESULTS_DIR,
                                JOBS_FILE,
+                               LOCK_FILE,
                                log_file_and_console )
 
 os.makedirs(UPLOAD_DIR, exist_ok=True)
@@ -20,14 +22,20 @@ os.makedirs(LOGS_DIR, exist_ok=True)
 os.makedirs(RESULTS_DIR, exist_ok=True)
 
 def load_jobs():
-    if os.path.exists(JOBS_FILE):
-        with open(JOBS_FILE, 'r') as f:
-            return json.load(f)
+    with FileLock(LOCK_FILE):
+        if os.path.exists(JOBS_FILE):
+            with open(JOBS_FILE, 'r') as f:
+                try:
+                    return json.load(f)
+                except json.decoder.JSONDecodeError:
+                    print("Error with jobs file, returning empty json.")
+                    return {}
     return {}
 
 def save_jobs(jobs):
-    with open(JOBS_FILE, 'w') as f:
-        json.dump(jobs, f, indent=2)
+    with FileLock(LOCK_FILE):
+        with open(JOBS_FILE, 'w') as f:
+            json.dump(jobs, f, indent=2)
 
 def get_all_jobs():
     jobs = load_jobs()
