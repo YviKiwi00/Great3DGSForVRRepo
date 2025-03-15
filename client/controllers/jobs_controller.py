@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 
-from services.jobs_service import (fetch_jobs_from_server,
+from services.jobs_service import (handle_image_upload,
+                                   fetch_jobs_from_server,
                                    fetch_job_details,
                                    fetch_job_logs,
                                    trigger_colmap,
@@ -13,6 +14,17 @@ from services.jobs_service import (fetch_jobs_from_server,
                                    download_result)
 
 jobs_blueprint = Blueprint('jobs', __name__)
+
+@jobs_blueprint.route('/imageUpload', methods=['POST'])
+def image_upload():
+    files = request.files.getlist('files')
+    project_name = request.form.get('projectName', 'UnnamedProject')
+
+    if not files:
+        return jsonify({'error': 'No files uploaded'}), 400
+
+    response = handle_image_upload(files, project_name)
+    return jsonify(response)
 
 @jobs_blueprint.route('/jobs', methods=['GET'])
 def list_jobs():
