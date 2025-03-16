@@ -210,10 +210,10 @@ def process_second_job_batch(job_id: str):
         if response.status_code != 200:
             raise Exception(f"Gaussian Segmentation failed: {response.text}")
 
-        # Frosting Training
-        response = requests.post(f"{API_BASE}/jobs/{job_id}/frosting")
-        if response.status_code != 200:
-            raise Exception(f"Frosting failed: {response.text}")
+        # # Frosting Training
+        # response = requests.post(f"{API_BASE}/jobs/{job_id}/frosting")
+        # if response.status_code != 200:
+        #     raise Exception(f"Frosting failed: {response.text}")
 
     except Exception as e:
         log_file_and_console(job_id, f"Error during second Batch: {str(e)}\n")
