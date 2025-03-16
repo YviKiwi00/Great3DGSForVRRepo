@@ -28,7 +28,8 @@ def mcmc_subprocess(job_id: str):
     source_path = os.path.join(UPLOAD_DIR, f"{job_id}")
     output_path = os.path.join(RESULTS_DIR, f"{job_id}")
 
-    cap_max = str(1_000_000)
+    iterations = str(15_000)
+    cap_max = str(4_000_000)
     scale_reg = str(0.01)
     opacity_reg = str(0.01)
     noise_lr = str(5e5)
@@ -38,6 +39,7 @@ def mcmc_subprocess(job_id: str):
         "python", script_path,
         "--source_path", source_path,
         "--model_path", output_path,
+        "--iterations", iterations,
         "--cap_max", cap_max,
         "--scale_reg", scale_reg,
         "--opacity_reg", opacity_reg,
