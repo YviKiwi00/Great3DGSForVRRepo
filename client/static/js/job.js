@@ -31,38 +31,38 @@ function pollJobDetails(jobId) {
                 break;
             case job.status.includes('failed_colmap'):
                 updateButtons(true, false, false, false, false, false)
-                document.getElementById('segmentationContainer').innerHTML = '';
+                clearSegmentationContainer()
                 break;
             case job.status.includes('failed_mcmc'):
                 updateButtons(true, true, false, false, false, false)
-                document.getElementById('segmentationContainer').innerHTML = '';
+                clearSegmentationContainer()
                 break;
             case job.status.includes('failed_segmentation_preparation'):
                 updateButtons(true, true, true, false, false, false)
-                document.getElementById('segmentationContainer').innerHTML = '';
+                clearSegmentationContainer()
                 break;
             case job.status.includes('failed_gaussian_segmentation'):
                 updateButtons(true, true, true, true, false, false)
-                document.getElementById('segmentationContainer').innerHTML = '';
+                clearSegmentationContainer()
                 break;
             case job.status.includes('failed_frosting'):
                 updateButtons(true, true, true, true, true, false)
-                document.getElementById('segmentationContainer').innerHTML = '';
+                clearSegmentationContainer()
                 break;
             case job.status.includes('running'):
                 updateButtons(false, false, false, false, false, false)
-                document.getElementById('segmentationContainer').innerHTML = '';
+                clearSegmentationContainer()
                 break;
             case job.status.includes('failed'):
                 updateButtons(true, true, true, true, true, true)
-                document.getElementById('segmentationContainer').innerHTML = '';
+                clearSegmentationContainer()
                 break;
             case job.status.includes('removed_job_queue'):
                 updateButtons(true, true, true, true, true, true)
-                document.getElementById('segmentationContainer').innerHTML = '';
+                clearSegmentationContainer()
                 break;
             case job.status.includes('job_queued'):
-                document.getElementById('segmentationContainer').innerHTML = '';
+                clearSegmentationContainer()
                 break;
         }
 
