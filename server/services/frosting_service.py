@@ -111,7 +111,7 @@ def frosting_seg_subprocess(job_id: str):
     export_obj = str(True)
     use_occlusion_culling = str(False)
     regularization_type = "dn_consistency"
-    gaussians_in_frosting = str(4_000_000)
+    gaussians_in_frosting = str(8_000_000)
 
     cmd = [
         "python", script_path,
