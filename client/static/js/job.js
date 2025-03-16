@@ -114,6 +114,14 @@ function updateButtons(colmap, mcmc, segPrep, segmentation, frosting, download) 
     downloadButton.style.display = download ? 'block' : 'none';
 }
 
+function clearSegmentationContainer() {
+    document.getElementById('segmentationContainer').innerHTML = `
+    <canvas id="promptImageCanvas"></canvas>
+    <div id="previewContainer"></div>
+    <button id="confirmButton" style="display:none;" onclick="confirmSegmentation()">Confirm Segmentation</button>
+`;
+}
+
 async function startColmap() {
     const response = await fetch(`/jobs/${jobId}/colmap`, {method: 'POST'});
 
