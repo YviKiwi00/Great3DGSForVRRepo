@@ -5,7 +5,8 @@ from datetime import datetime
 from services.jobs_service import (load_jobs,
                                    save_jobs)
 from utils.jobs_utils import (log_file_and_console,
-                              RESULTS_DIR)
+                              RESULTS_DIR,
+                              UPLOAD_DIR)
 from jobs_queue import enqueue_job
 
 # ===== Segmentation Preparation ===== #
@@ -85,6 +86,7 @@ def run_gaussian_segmentation(job_id: str):
     save_jobs(jobs)
 
     enqueue_job(job_id, gaussian_segmentation_subprocess, "GAUSSIAN_SEG")
+    enqueue_job(job_id, cutout_images_subprocess, "GAUSSIAN_SEG_IMAGE_CUTOUT")
 
     return {"job_id": job_id, "status": jobs[job_id]["status"]}
 
@@ -145,3 +147,62 @@ def gaussian_segmentation_subprocess(job_id: str):
     save_jobs(jobs)
 
     log_file_and_console(job_id, f"========== Gaussian Segmentation for Job {job_id} finished. ==========\n")
+
+def cutout_images_subprocess(job_id: str):
+    script_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "utils"))
+    script_path = os.path.join(script_dir, "cutout_images.py")
+
+    env = os.environ.copy()
+    env["PYTHONPATH"] = script_dir
+
+    masks_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", f"{RESULTS_DIR}", f"{job_id}", "sam_masks"))
+    images_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", f"{UPLOAD_DIR}", f"{job_id}", "images"))
+    output_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", f"{RESULTS_DIR}", f"{job_id}", "seg_ground"))
+
+    cmd = [
+        "python", script_path,
+        "--masks_folder", masks_folder,
+        "--images_folder", images_folder,
+        "--output_folder", output_folder
+    ]
+
+    jobs = load_jobs()
+    jobs[job_id]["status"] = "running_gaussian_segmentation"
+    save_jobs(jobs)
+
+    log_file_and_console(job_id, f"========== Starting Image-Cutout for Job {job_id} ==========\n")
+
+    start_time = datetime.now()
+    log_file_and_console(job_id, f"===== Start-Time: {start_time} =====\n")
+
+    process = subprocess.Popen(
+        cmd,
+        env=env,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True
+    )
+
+    # Log-Streaming Loop
+    for line in process.stdout:
+        log_file_and_console(job_id, line)
+
+    exit_code = process.wait()
+
+    end_time = datetime.now()
+    duration = end_time - start_time
+
+    log_file_and_console(job_id, f"===== End-Time: {end_time}; Duration: {duration} =====\n")
+
+    if exit_code != 0:
+        jobs = load_jobs()
+        jobs[job_id]["status"] = "failed_gaussian_segmentation"
+        save_jobs(jobs)
+        log_file_and_console(job_id, "Image Cutout failed with code {exit_code}\n")
+        raise Exception(f"Image Cutout failed with code {exit_code}")
+
+    jobs = load_jobs()
+    jobs[job_id]["status"] = "done_gaussian_segmentation"
+    save_jobs(jobs)
+
+    log_file_and_console(job_id, f"========== Image Cutout for Job {job_id} finished. ==========\n")
