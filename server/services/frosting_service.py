@@ -7,8 +7,7 @@ from services.jobs_service import (load_jobs,
 from utils.jobs_utils import (log_file_and_console,
                               UPLOAD_DIR,
                               RESULTS_DIR,
-                              EXP_MCMC_ITERATIONS,
-                              EXP_FROSTING_GAUSS)
+                              get_exp_values)
 from jobs_queue import enqueue_job
 
 def run_frosting(job_id: str):
@@ -32,6 +31,8 @@ def frosting_whole_subprocess(job_id: str):
     gs_output_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", f"{RESULTS_DIR}", f"{job_id}"))
     results_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", f"{RESULTS_DIR}", f"{job_id}", "frosting", "whole"))
 
+    mcmc_iterations, _, frosting_gauss = get_exp_values()
+
     os.makedirs(results_dir, exist_ok=True)
 
     ply_name = "point_cloud.ply"
@@ -39,8 +40,8 @@ def frosting_whole_subprocess(job_id: str):
     export_obj = str(True)
     use_occlusion_culling = str(False)
     regularization_type = "dn_consistency"
-    gaussians_in_frosting = str(EXP_FROSTING_GAUSS)
-    iterations_to_load = str(EXP_MCMC_ITERATIONS)
+    gaussians_in_frosting = str(frosting_gauss)
+    iterations_to_load = str(mcmc_iterations)
 
     cmd = [
         "python", script_path,
@@ -108,6 +109,8 @@ def frosting_seg_subprocess(job_id: str):
     gs_output_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", f"{RESULTS_DIR}", f"{job_id}"))
     results_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", f"{RESULTS_DIR}", f"{job_id}", "frosting", "segmented"))
 
+    mcmc_iterations, _, frosting_gauss = get_exp_values()
+
     os.makedirs(results_dir, exist_ok=True)
 
     ply_name = "point_cloud_seg_gd.ply"
@@ -115,8 +118,8 @@ def frosting_seg_subprocess(job_id: str):
     export_obj = str(True)
     use_occlusion_culling = str(False)
     regularization_type = "dn_consistency"
-    gaussians_in_frosting = str(EXP_FROSTING_GAUSS)
-    iterations_to_load = str(EXP_MCMC_ITERATIONS)
+    gaussians_in_frosting = str(frosting_gauss)
+    iterations_to_load = str(mcmc_iterations)
 
     cmd = [
         "python", script_path,

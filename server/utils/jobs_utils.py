@@ -2,6 +2,7 @@ import os
 import base64
 import time
 import requests
+import json
 
 API_BASE = "http://localhost:5000"
 
@@ -12,6 +13,8 @@ RESULTS_DIR = os.path.join(STORAGE_DIR, "results")
 JOBS_FILE = os.path.join(STORAGE_DIR, "jobs.json")
 LOCK_FILE = JOBS_FILE + ".lock"
 
+EXP_FILE = os.path.join("exp_cfgs.json")
+
 EXP_MCMC_ITERATIONS = 12_000      # Baseline is 12_000
 EXP_MCMC_CAPMAX = 6_000_000      # Baseline is 6_000_000
 EXP_FROSTING_GAUSS = 2_000_000   # Baseline is 2_000_000
@@ -19,6 +22,17 @@ EXP_FROSTING_GAUSS = 2_000_000   # Baseline is 2_000_000
 def encode_image_as_base64(filepath):
     with open(filepath, "rb") as f:
         return base64.b64encode(f.read()).decode('utf-8')
+
+def get_exp_values():
+    cfg_data = {}
+    if os.path.exists(EXP_FILE):
+        with open(EXP_FILE, 'r') as f:
+            try:
+                cfg_data = json.load(f)
+            except json.decoder.JSONDecodeError:
+                print("No exp_cfgs.json, returning empty json.")
+
+    return cfg_data.get("mcmc_iterations", EXP_MCMC_ITERATIONS), cfg_data.get("mcmc_capMax", EXP_MCMC_CAPMAX), cfg_data.get("frosting_gauss", EXP_FROSTING_GAUSS)
 
 def wait_for_job_status(job_id, api_base, target_status, timeout=14400): # 4 Stunden
     start_time = time.time()

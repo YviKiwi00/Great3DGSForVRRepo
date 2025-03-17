@@ -7,8 +7,7 @@ from services.jobs_service import (load_jobs,
 from utils.jobs_utils import (log_file_and_console,
                               UPLOAD_DIR,
                               RESULTS_DIR,
-                              EXP_MCMC_ITERATIONS,
-                              EXP_MCMC_CAPMAX)
+                              get_exp_values)
 from jobs_queue import enqueue_job
 
 def run_mcmc(job_id: str):
@@ -30,8 +29,10 @@ def mcmc_subprocess(job_id: str):
     source_path = os.path.join(UPLOAD_DIR, f"{job_id}")
     output_path = os.path.join(RESULTS_DIR, f"{job_id}")
 
-    iterations = str(EXP_MCMC_ITERATIONS)
-    cap_max = str(EXP_MCMC_CAPMAX)
+    mcmc_iterations, mcmc_cap_max, _ = get_exp_values()
+
+    iterations = str(mcmc_iterations)
+    cap_max = str(mcmc_cap_max)
     scale_reg = str(0.01)
     opacity_reg = str(0.01)
     noise_lr = str(5e5)
