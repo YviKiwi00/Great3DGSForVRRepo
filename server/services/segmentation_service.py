@@ -26,11 +26,13 @@ def segmentation_preparation_subprocess(job_id: str):
     env["PYTHONPATH"] = script_dir
 
     model_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", f"{RESULTS_DIR}", f"{job_id}"))
+    iterations_to_load = str(15_000)
 
     cmd = [
         "python", script_path,
         "--job_id", job_id,
-        "--model_path", model_path
+        "--model_path", model_path,
+        "--iteration", iterations_to_load
     ]
 
     jobs = load_jobs()
@@ -94,11 +96,13 @@ def gaussian_segmentation_subprocess(job_id: str):
     env["PYTHONPATH"] = script_dir
 
     model_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", f"{RESULTS_DIR}", f"{job_id}"))
+    iterations_to_load = str(15_000)
 
     cmd = [
         "python", script_path,
         "--job_id", job_id,
-        "--model_path", model_path
+        "--model_path", model_path,
+        "--iteration", iterations_to_load
     ]
 
     jobs = load_jobs()
