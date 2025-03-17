@@ -15,6 +15,7 @@ def process_images(masks_folder, images_folder, output_folder, background_color=
         background_color (tuple): RGB color for the background (default is white).
     """
     os.makedirs(output_folder, exist_ok=True)
+
     mask_files = sorted([f for f in os.listdir(masks_folder) if f.lower().endswith(('.png', '.jpg', '.jpeg'))])
     image_files = sorted([f for f in os.listdir(images_folder) if f.lower().endswith(('.png', '.jpg', '.jpeg'))])
 
@@ -25,28 +26,25 @@ def process_images(masks_folder, images_folder, output_folder, background_color=
         mask_path = os.path.join(masks_folder, mask_file)
         image_path = os.path.join(images_folder, image_file)
 
-        mask = np.array(Image.open(mask_path))
-        image = np.array(Image.open(image_path))
+        mask = np.array(Image.open(mask_path).convert("L"))
+        image = np.array(Image.open(image_path).convert("RGBA"))
 
-        # Ensure the mask is in RGB format
-        if mask.ndim == 2:  # If mask is grayscale, convert to RGB
-            mask = np.stack([mask] * 3, axis=-1)
+        mask = mask > 128
 
-        if background_color[-1] < 255:  # Transparent background (RGBA)
+        if len(background_color) == 4:  # Transparent background (RGBA)
             extracted_object = np.zeros((*image.shape[:2], 4), dtype=np.uint8)  # RGBA image
-            extracted_object[mask, :3] = image[mask]  # Copy RGB
-            extracted_object[mask, 3] = 255  # Set alpha to opaque for the object
-            extracted_object[~mask] = background_color  # Set background to specified RGBA
+            extracted_object[:, :, :3] = background_color[:3]  # Set background color
+            extracted_object[:, :, 3] = background_color[3]  # Set background alpha
+            extracted_object[mask] = image[mask]  # Copy RGB
         else:  # Opaque background (RGB)
-            extracted_object = np.zeros_like(image)
-            extracted_object[mask] = image[mask]
-            extracted_object[~mask] = background_color[:3]  # Use only RGB values
+            extracted_object = np.full_like(image[:, :, :3], background_color[:3], dtype=np.uint8)
+            extracted_object[mask] = image[mask][:, :3]
 
         os.makedirs(output_folder, exist_ok=True)
 
         # Save the resulting image
-        output_path = os.path.join(output_folder, f"{mask_file.split('.')[0]}.png")
-        if background_color[-1] < 255:  # Transparent background
+        output_path = os.path.join(output_folder, f"{os.path.splitext(mask_file)[0]}.png")
+        if len(background_color) == 4:  # Transparent background
             Image.fromarray(extracted_object, mode="RGBA").save(output_path)
         else:  # Opaque background
             Image.fromarray(extracted_object).save(output_path)

@@ -89,7 +89,7 @@ def get_prompt_image(job_id: str):
     if not image_files:
         raise Exception("No Image Files found!")
 
-    return FileResponse(image_files[0])
+    return FileResponse(os.path.join(image_dir, image_files[0]))
 
 def handle_segmentation_prompt(job_id: str, point: dict):
     x, y = point['x'], point['y']
