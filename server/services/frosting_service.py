@@ -1,6 +1,7 @@
 import subprocess
 import os
 from datetime import datetime
+import shutil
 
 from services.jobs_service import (load_jobs,
                                    save_jobs)
@@ -14,6 +15,11 @@ def run_frosting(job_id: str):
     jobs = load_jobs()
     jobs[job_id]["status"] = "job_queued"
     save_jobs(jobs)
+
+    seg_ground_image_path = os.path.join(RESULTS_DIR, f"{job_id}", "seg_ground")
+    seg_scene_image_path = os.path.join(RESULTS_DIR, f"{job_id}", "frosting", "segmented", "images")
+
+    copy_seg_ground_in_scene_path(seg_ground_image_path, seg_scene_image_path)
 
     enqueue_job(job_id, frosting_whole_subprocess, "FROSTING_WHOLE")
     enqueue_job(job_id, frosting_seg_subprocess, "FROSTING_SEG")
@@ -105,7 +111,6 @@ def frosting_seg_subprocess(job_id: str):
     env = os.environ.copy()
     env["PYTHONPATH"] = script_dir
 
-    source_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", f"{UPLOAD_DIR}", f"{job_id}"))
     gs_output_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", f"{RESULTS_DIR}", f"{job_id}"))
     results_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", f"{RESULTS_DIR}", f"{job_id}", "frosting", "segmented"))
 
@@ -123,7 +128,7 @@ def frosting_seg_subprocess(job_id: str):
 
     cmd = [
         "python", script_path,
-        "--scene_path", source_path,
+        "--scene_path", results_dir,
         "--gs_output_dir", gs_output_dir,
         "--iteration_to_load", iterations_to_load,
         "--results_dir", results_dir,
@@ -175,3 +180,12 @@ def frosting_seg_subprocess(job_id: str):
     save_jobs(jobs)
 
     log_file_and_console(job_id, f"========== Frosting Training for segmented object for Job {job_id} finished. ==========\n")
+
+def copy_seg_ground_in_scene_path(source_path: str, target_path: str):
+    if os.path.exists(target_path):
+        shutil.rmtree(target_path)
+    else:
+        os.makedirs(target_path)
+
+    shutil.copytree(source_path, target_path)
+    print(f"Directory '{source_path}' was copied to '{target_path}'.")
