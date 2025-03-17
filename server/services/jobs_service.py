@@ -191,15 +191,16 @@ def process_first_job_batch(job_id: str):
         if response.status_code != 200:
             raise Exception(f"Colmap failed: {response.text}")
 
-        # 3DGS MCMC Training
-        response = requests.post(f"{API_BASE}/jobs/{job_id}/mcmc")
-        if response.status_code != 200:
-            raise Exception(f"MCMC failed: {response.text}")
-
-        # Segmentation Preparation
-        response = requests.post(f"{API_BASE}/jobs/{job_id}/segmentationPreparation")
-        if response.status_code != 200:
-            raise Exception(f"Segmentation Preparation failed: {response.text}")
+        # For experiment purposes commented out
+        # # 3DGS MCMC Training
+        # response = requests.post(f"{API_BASE}/jobs/{job_id}/mcmc")
+        # if response.status_code != 200:
+        #     raise Exception(f"MCMC failed: {response.text}")
+        #
+        # # Segmentation Preparation
+        # response = requests.post(f"{API_BASE}/jobs/{job_id}/segmentationPreparation")
+        # if response.status_code != 200:
+        #     raise Exception(f"Segmentation Preparation failed: {response.text}")
 
     except Exception as e:
         log_file_and_console(job_id, f"Error during first Batch: {str(e)}\n")
@@ -216,6 +217,7 @@ def process_second_job_batch(job_id: str):
         if response.status_code != 200:
             raise Exception(f"Gaussian Segmentation failed: {response.text}")
 
+        # For experiment purposes commented out
         # # Frosting Training
         # response = requests.post(f"{API_BASE}/jobs/{job_id}/frosting")
         # if response.status_code != 200:
