@@ -3,6 +3,7 @@ import uuid
 import shutil
 import json
 import requests
+import glob
 import subprocess
 
 from filelock import FileLock
@@ -82,8 +83,13 @@ def get_job_logs(job_id: str):
     return "".join(tail)
 
 def get_prompt_image(job_id: str):
-    image_file = os.path.join(os.path.dirname(__file__), "..", "great3dgsforvr", "SAGS", "render_images", f"{job_id}", "render_image_0.png")
-    return FileResponse(image_file)
+    image_dir = os.path.join(os.path.dirname(__file__), "..", "great3dgsforvr", "SAGS", "render_images", f"{job_id}")
+    image_files = sorted([f for f in os.listdir(image_dir) if f.lower().endswith(('.png', '.jpg', '.jpeg'))])
+
+    if not image_files:
+        raise Exception("No Image Files found!")
+
+    return FileResponse(image_files[0])
 
 def handle_segmentation_prompt(job_id: str, point: dict):
     x, y = point['x'], point['y']
