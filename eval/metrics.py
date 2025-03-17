@@ -14,13 +14,15 @@ import os
 from PIL import Image
 import torch
 import torchvision.transforms.functional as tf
+from argparse import ArgumentParser
 import json
 from tqdm import tqdm
-from argparse import ArgumentParser
-
-from skimage.metrics import peak_signal_noise_ratio as psnr
-from skimage.metrics import structural_similarity as ssim
+import skimage.metrics
+from skimage.metrics import peak_signal_noise_ratio
+from skimage.metrics import structural_similarity
 import lpips
+
+lpips_model = lpips.LPIPS(net='vgg').to('cuda')
 
 def readImages(renders_dir, gt_dir):
     renders = []
@@ -28,9 +30,11 @@ def readImages(renders_dir, gt_dir):
     image_names = []
     for fname in os.listdir(renders_dir):
         render = Image.open(renders_dir / fname)
+        renders.append(tf.to_tensor(render)[:3, :, :].cuda())
+
         gt = Image.open(gt_dir / fname)
-        renders.append(tf.to_tensor(render).unsqueeze(0)[:, :3, :, :].cuda())
-        gts.append(tf.to_tensor(gt).unsqueeze(0)[:, :3, :, :].cuda())
+        gts.append(tf.to_tensor(gt)[:3, :, :].cuda())
+
         image_names.append(fname)
     return renders, gts, image_names
 
@@ -65,14 +69,18 @@ def evaluate(model_paths):
                 renders_dir = method_dir / "renders"
                 renders, gts, image_names = readImages(renders_dir, gt_dir)
 
-                ssims = []
                 psnrs = []
+                ssims = []
                 lpipss = []
 
                 for idx in tqdm(range(len(renders)), desc="Metric evaluation progress"):
-                    ssims.append(ssim(gts[idx], renders[idx]))
-                    psnrs.append(psnr(gts[idx], renders[idx]))
-                    lpipss.append(lpips(renders[idx], gts[idx], net_type='vgg'))
+                    psnrs.append(peak_signal_noise_ratio(gts[idx], renders[idx]))
+                    ssims.append(structural_similarity(gts[idx], renders[idx]))
+
+                    gt_tensor = torch.tensor(gts[idx]).permute(2, 0, 1).unsqueeze(0).float() * 2 - 1
+                    render_tensor = torch.tensor(renders[idx]).permute(2, 0, 1).unsqueeze(0).float() * 2 - 1
+
+                    lpipss.append(lpips_model(gt_tensor, render_tensor).item())
 
                 print("  SSIM : {:>12.7f}".format(torch.tensor(ssims).mean(), ".5"))
                 print("  PSNR : {:>12.7f}".format(torch.tensor(psnrs).mean(), ".5"))
