@@ -7,7 +7,8 @@ from services.jobs_service import (handle_image_upload,
                                    trigger_colmap,
                                    trigger_mcmc,
                                    trigger_segmentation_preparation,
-                                   trigger_frosting,
+                                   trigger_frosting_whole,
+                                   trigger_frosting_seg,
                                    fetch_segment_prompt_image,
                                    send_prompt_to_server,
                                    confirm_segmentation_for_job,
@@ -63,9 +64,13 @@ def send_segmentation_prompt(job_id):
 def confirm_segmentation(job_id):
     return jsonify(confirm_segmentation_for_job(job_id))
 
-@jobs_blueprint.route('/jobs/<job_id>/frosting', methods=['POST'])
+@jobs_blueprint.route('/jobs/<job_id>/frosting_whole', methods=['POST'])
 def start_frosting(job_id):
-    return jsonify(trigger_frosting(job_id))
+    return jsonify(trigger_frosting_whole(job_id))
+
+@jobs_blueprint.route('/jobs/<job_id>/frosting_seg', methods=['POST'])
+def start_frosting(job_id):
+    return jsonify(trigger_frosting_seg(job_id))
 
 @jobs_blueprint.route('/jobs/<job_id>/download', methods=['GET'])
 def download_final_result(job_id):

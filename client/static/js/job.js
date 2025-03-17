@@ -103,14 +103,16 @@ function updateButtons(colmap, mcmc, segPrep, segmentation, frosting, download) 
     const mcmcButton = document.getElementById('mcmcButton');
     const segPrepButton = document.getElementById('segPrepButton');
     const showSegmentationImageButton = document.getElementById('showSegmentationImageButton');
-    const frostingButton = document.getElementById('frostingButton');
+    const frostingWholeButton = document.getElementById('frostingWholeButton');
+    const frostingSegButton = document.getElementById('frostingSegButton');
     const downloadButton = document.getElementById('downloadButton');
 
     colmapButton.style.display = colmap ? 'block' : 'none';
     mcmcButton.style.display = mcmc ? 'block' : 'none';
     segPrepButton.style.display = segPrep ? 'block' : 'none';
     showSegmentationImageButton.style.display = segmentation ? 'block' : 'none';
-    frostingButton.style.display = frosting ? 'block' : 'none';
+    frostingWholeButton.style.display = frosting ? 'block' : 'none';
+    frostingSegButton.style.display = frosting ? 'block' : 'none';
     downloadButton.style.display = download ? 'block' : 'none';
 }
 
@@ -155,8 +157,19 @@ async function startSegPrep() {
     alert('Segmentation_Preparation-Process queued!');
 }
 
-async function startFrosting() {
-    const response = await fetch(`/jobs/${jobId}/frosting`, {method: 'POST'});
+async function startFrostingWhole() {
+    const response = await fetch(`/jobs/${jobId}/frosting_whole`, {method: 'POST'});
+
+    if (!response.ok){
+        alert("Something went wrong on queueing Frosting-Process!");
+        return;
+    }
+
+    alert('Frosting-Process queued!');
+}
+
+async function startFrostingSeg() {
+    const response = await fetch(`/jobs/${jobId}/frosting_seg`, {method: 'POST'});
 
     if (!response.ok){
         alert("Something went wrong on queueing Frosting-Process!");

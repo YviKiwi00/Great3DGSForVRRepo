@@ -11,18 +11,12 @@ from utils.jobs_utils import (log_file_and_console,
                               get_exp_values)
 from jobs_queue import enqueue_job
 
-def run_frosting(job_id: str):
+def run_frosting_whole(job_id: str):
     jobs = load_jobs()
     jobs[job_id]["status"] = "job_queued"
     save_jobs(jobs)
 
-    seg_ground_image_path = os.path.join(RESULTS_DIR, f"{job_id}", "seg_ground")
-    seg_scene_image_path = os.path.join(RESULTS_DIR, f"{job_id}", "frosting", "segmented", "images")
-
-    copy_seg_ground_in_scene_path(seg_ground_image_path, seg_scene_image_path)
-
     enqueue_job(job_id, frosting_whole_subprocess, "FROSTING_WHOLE")
-    enqueue_job(job_id, frosting_seg_subprocess, "FROSTING_SEG")
 
     return {"job_id": job_id, "status": jobs[job_id]["status"]}
 
@@ -103,6 +97,20 @@ def frosting_whole_subprocess(job_id: str):
     save_jobs(jobs)
 
     log_file_and_console(job_id, f"========== Frosting Training for whole scene for Job {job_id} finished. ==========\n")
+
+def run_frosting_seg(job_id: str):
+    jobs = load_jobs()
+    jobs[job_id]["status"] = "job_queued"
+    save_jobs(jobs)
+
+    seg_ground_image_path = os.path.join(RESULTS_DIR, f"{job_id}", "seg_ground")
+    seg_scene_image_path = os.path.join(RESULTS_DIR, f"{job_id}", "frosting", "segmented", "images")
+
+    copy_seg_ground_in_scene_path(seg_ground_image_path, seg_scene_image_path)
+
+    enqueue_job(job_id, frosting_seg_subprocess, "FROSTING_SEG")
+
+    return {"job_id": job_id, "status": jobs[job_id]["status"]}
 
 def frosting_seg_subprocess(job_id: str):
     script_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "great3dgsforvr", "Frosting"))

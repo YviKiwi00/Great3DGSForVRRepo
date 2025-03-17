@@ -70,8 +70,14 @@ def confirm_segmentation_for_job(job_id):
         raise Exception(f"Failed to confirm segmentation: {response.text}")
     return response.json()
 
-def trigger_frosting(job_id):
-    response = requests.post(f"{API_BASE}/jobs/{job_id}/frosting")
+def trigger_frosting_whole(job_id):
+    response = requests.post(f"{API_BASE}/jobs/{job_id}/frosting_whole")
+    if response.status_code != 200:
+        raise Exception(f"Failed to start Frosting for job {job_id}: {response.text}")
+    return response.json()
+
+def trigger_frosting_seg(job_id):
+    response = requests.post(f"{API_BASE}/jobs/{job_id}/frosting_seg")
     if response.status_code != 200:
         raise Exception(f"Failed to start Frosting for job {job_id}: {response.text}")
     return response.json()
