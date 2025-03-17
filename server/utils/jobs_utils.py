@@ -12,6 +12,10 @@ RESULTS_DIR = os.path.join(STORAGE_DIR, "results")
 JOBS_FILE = os.path.join(STORAGE_DIR, "jobs.json")
 LOCK_FILE = JOBS_FILE + ".lock"
 
+EXP_MCMC_ITERATIONS = 7_000      # Baseline is 12_000
+EXP_MCMC_CAPMAX = 6_000_000      # Baseline is 6_000_000
+EXP_FROSTING_GAUSS = 2_000_000   # Baseline is 2_000_000
+
 def encode_image_as_base64(filepath):
     with open(filepath, "rb") as f:
         return base64.b64encode(f.read()).decode('utf-8')

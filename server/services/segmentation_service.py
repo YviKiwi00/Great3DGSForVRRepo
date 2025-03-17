@@ -6,7 +6,8 @@ from services.jobs_service import (load_jobs,
                                    save_jobs)
 from utils.jobs_utils import (log_file_and_console,
                               RESULTS_DIR,
-                              UPLOAD_DIR)
+                              UPLOAD_DIR,
+                              EXP_MCMC_ITERATIONS)
 from jobs_queue import enqueue_job
 
 # ===== Segmentation Preparation ===== #
@@ -27,7 +28,7 @@ def segmentation_preparation_subprocess(job_id: str):
     env["PYTHONPATH"] = script_dir
 
     model_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", f"{RESULTS_DIR}", f"{job_id}"))
-    iterations_to_load = str(15_000)
+    iterations_to_load = str(EXP_MCMC_ITERATIONS)
 
     cmd = [
         "python", script_path,
@@ -98,7 +99,7 @@ def gaussian_segmentation_subprocess(job_id: str):
     env["PYTHONPATH"] = script_dir
 
     model_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", f"{RESULTS_DIR}", f"{job_id}"))
-    iterations_to_load = str(15_000)
+    iterations_to_load = str(EXP_MCMC_ITERATIONS)
 
     cmd = [
         "python", script_path,

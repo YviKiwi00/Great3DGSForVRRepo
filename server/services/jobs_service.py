@@ -15,7 +15,7 @@ from utils.jobs_utils import ( API_BASE,
                                RESULTS_DIR,
                                JOBS_FILE,
                                LOCK_FILE,
-                               log_file_and_console )
+                               log_file_and_console)
 
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 os.makedirs(LOGS_DIR, exist_ok=True)
