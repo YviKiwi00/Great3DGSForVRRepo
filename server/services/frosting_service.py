@@ -103,11 +103,6 @@ def run_frosting_seg(job_id: str):
     jobs[job_id]["status"] = "job_queued"
     save_jobs(jobs)
 
-    seg_ground_image_path = os.path.join(RESULTS_DIR, f"{job_id}", "seg_ground")
-    seg_scene_image_path = os.path.join(RESULTS_DIR, f"{job_id}", "frosting", "segmented", "images")
-
-    copy_seg_ground_in_scene_path(seg_ground_image_path, seg_scene_image_path)
-
     enqueue_job(job_id, frosting_seg_subprocess, "FROSTING_SEG")
 
     return {"job_id": job_id, "status": jobs[job_id]["status"]}
@@ -119,6 +114,7 @@ def frosting_seg_subprocess(job_id: str):
     env = os.environ.copy()
     env["PYTHONPATH"] = script_dir
 
+    source_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", f"{UPLOAD_DIR}", f"{job_id}"))
     gs_output_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", f"{RESULTS_DIR}", f"{job_id}"))
     results_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", f"{RESULTS_DIR}", f"{job_id}", "frosting", "segmented"))
 
@@ -136,7 +132,7 @@ def frosting_seg_subprocess(job_id: str):
 
     cmd = [
         "python", script_path,
-        "--scene_path", results_dir,
+        "--scene_path", source_path,
         "--gs_output_dir", gs_output_dir,
         "--iteration_to_load", iterations_to_load,
         "--results_dir", results_dir,
