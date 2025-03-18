@@ -19,10 +19,16 @@ def process_images(masks_folder, images_folder, output_folder, background_color=
     mask_files = sorted([f for f in os.listdir(masks_folder) if f.lower().endswith(('.png', '.jpg', '.jpeg'))])
     image_files = sorted([f for f in os.listdir(images_folder) if f.lower().endswith(('.png', '.jpg', '.jpeg'))])
 
-    if len(mask_files) != len(image_files):
-        raise ValueError("The number of masks and images should be the same.")
+    # if len(mask_files) != len(image_files):
+    #     raise ValueError("The number of masks and images should be the same.")
 
     for mask_file, image_file in zip(mask_files, image_files):
+        mask_base = os.path.splitext(mask_file)[0]
+        image_base = os.path.splitext(image_file)[0]
+
+        if image_base not in mask_base:
+            continue
+
         mask_path = os.path.join(masks_folder, mask_file)
         image_path = os.path.join(images_folder, image_file)
 

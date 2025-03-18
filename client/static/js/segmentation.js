@@ -10,17 +10,21 @@ async function loadPromptImage() {
     const blob = await response.blob();
     const img = new Image();
 
-    console.log("In loadPromptImage, called segmentationPromptImage")
+    if (blob.size === 0) {
+        console.error("ERROR: Received empty blob from server!");
+        return;
+    }
 
     img.onload = () => {
-        console.log("Image loaded")
         canvas.width = img.width;
         canvas.height = img.height;
         currentImage = img
 
-        ctx.drawImage(currentImage, 0, 0);
+        requestAnimationFrame(() => {
+            ctx.drawImage(currentImage, 0, 0);
+        });
     };
-    img.src = URL.createObjectURL(blob);
+    img.src = URL.createObjectURL(blob) + `?nocache=${new Date().getTime()}`;
 
     canvas.onclick = (e) => {
         const rect = canvas.getBoundingClientRect();
