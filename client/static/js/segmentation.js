@@ -8,13 +8,10 @@ let selectedPoint = null;
 async function loadPromptImage() {
     const response = await fetch(`/jobs/${jobId}/segmentationPromptImage`);
     const blob = await response.blob();
+
+    const imgURL = URL.createObjectURL(blob);
+
     const img = new Image();
-
-    if (blob.size === 0) {
-        console.error("ERROR: Received empty blob from server!");
-        return;
-    }
-
     img.onload = () => {
         canvas.width = img.width;
         canvas.height = img.height;
@@ -23,8 +20,13 @@ async function loadPromptImage() {
         requestAnimationFrame(() => {
             ctx.drawImage(currentImage, 0, 0);
         });
+
+        setTimeout(() => {
+            URL.revokeObjectURL(imgURL);
+        }, 5000);
     };
-    img.src = URL.createObjectURL(blob) + `?nocache=${new Date().getTime()}`;
+
+    img.src = imgURL;
 
     canvas.onclick = (e) => {
         const rect = canvas.getBoundingClientRect();
