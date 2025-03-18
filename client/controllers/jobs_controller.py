@@ -65,11 +65,11 @@ def confirm_segmentation(job_id):
     return jsonify(confirm_segmentation_for_job(job_id))
 
 @jobs_blueprint.route('/jobs/<job_id>/frosting_whole', methods=['POST'])
-def start_frosting(job_id):
+def start_frosting_whole(job_id):
     return jsonify(trigger_frosting_whole(job_id))
 
 @jobs_blueprint.route('/jobs/<job_id>/frosting_seg', methods=['POST'])
-def start_frosting(job_id):
+def start_frosting_seg(job_id):
     return jsonify(trigger_frosting_seg(job_id))
 
 @jobs_blueprint.route('/jobs/<job_id>/download', methods=['GET'])
