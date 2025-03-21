@@ -1,223 +1,240 @@
-# Great 3DGS for VR
+# 🎮 Great 3DGS for VR
 
-## Abstract
+Eine Anwendung zur einfachen Verarbeitung von Bilddatensätzen und Aufbereitung dieser via 3D-Gaussian-Splatting zur einfachen Weiterverwendung in interaktiven 3D-Anwendungen.
 
-## Overview
+---
 
-## Installation
-Die Installation hier wird nur für Ubuntu-basierte Systeme beschrieben. Betriebssysteme wie Windows sind nicht getestet und die Funktionalität kann nicht garantiert werden.
+## 📌 Inhaltsverzeichnis
+- [📝 Abstract](#-abstract)
+- [📦 Installation](#-installation)
+  - [1. Abhängigkeiten](#1-abhängigkeiten)
+    - [1.1 C++ Compiler (GCC/G++)](#11-c-compiler-gccg)
+    - [1.2 CUDA Toolkit](#12-cuda-toolkit)
+  - [2. Conda-Environment & Module](#2-conda-environment--module)
+  - [3. Troubleshooting](#3-troubleshooting)
+- [🚀 Anwendung starten](#-anwendung-starten)
+  - [Server lokal](#server---lokal)
+  - [Server via SSH](#server---über-ssh)
+  - [Client starten](#client)
+- [🧪 Nutzung](#-nutzung)
+  - [Upload](#upload)
+  - [Jobs](#jobs)
+  - [Job-Details](#job-detail)
+  - [How-To](#how-to)
 
-Erst muss das Repo und seine Submodules geklont werden:
-```shell
+---
+
+## 📝 Abstract
+
+*(TODO - Abstract hinzufügen)*
+
+---
+
+## 📦 Installation
+
+> Die Installation wurde nur auf **Ubuntu-basierten Systemen** getestet. Eine Nutzung unter Windows wird nicht empfohlen.
+
+### 📥 Repository klonen
+```bash
 git clone --recurse-submodules https://github.com/YviKiwi00/Great3DGSForVRRepo.git
 ```
 
-### 1. Abhängigkeiten
+---
+
+### 1. Abhängigkeiten  
 <details>
-<summary><span style="font-weight: bold;">Hier klicken zum Aufklappen.</span></summary>
+<summary><strong>▶️ Hier klicken zum Aufklappen</strong></summary>
 
-Folgende Abhängigkeiten werden vor der Installation dieses Repos benötigt:
-
+#### Vorab benötigt:
 - Conda
 - Colmap
-- ImageMagick 7 (optional)
+- ImageMagick 7 *(optional)*
 - C++ Compiler für PyTorch
 - CUDA Toolkit 11.8
 
-Dabei ist wichtig, das der C++ Compiler und das CUDA SDK kompatibel sind. Im Folgenden wird die Installation beider Abhängigkeiten für dieses Repo beschrieben.
+Dabei müssen C++ Compiler und CUDA **kompatibel** zueinander sein. Das Projekt wurde mit CUDA Toolkit v11.8 und GCC / G++ v11 getestet. 
 
-#### 1.1 C++ Compiler
-Die Installation eines C++ Compilers kann einzeln oder neben anderen C++ Versionen durchgeführt werden. Laut der [CUDA-Dokumentation](https://docs.nvidia.com/cuda/archive/11.8.0/cuda-installation-guide-linux/index.html) von Nvidia ist GCC und G++ Version 11 kompatibel mit CUDA Toolkit 11.8. Sowohl g++ als auch gcc müssen beide die gleiche Version haben, um Fehler zu vermeiden.
+---
 
-- Installation der passenden gcc- und g++-Version
-    ```shell
-    sudo apt install build-essential
-    sudo apt -y install gcc-11 g++-11
-    ```
-- Alternative Versionen zu Manager hinzufügen (höhere Priorität wird Standardmäßig ausgewählt)
-    ```shell
-    sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-[Version] [Priorität]
-    sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-[Version] [Priorität]
-    ```
-- Checken, welche Versionen verfügbar sind + Auswahl der gerade benötigten Version
-    ```shell
-    sudo update-alternatives --config gcc
-    sudo update-alternatives --config g++
-    ```
-- Checken der gerade aktiven Version
-    ```shell
-    gcc --version
-    g++ --version
-    ```
-Für die Installation und Benutzung dieses Repos muss die kompatible Version von GCC und G++ auf dem System aktiv sein!
+#### 1.1 C++ Compiler (GCC/G++)
+Empfohlen: GCC/G++ 11
+```bash
+sudo apt install build-essential
+sudo apt -y install gcc-[Version] g++-[Version]
+```
+
+#### Version verwalten (eine höhere Priorität wird automatisch genutzt)
+```bash
+sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-[Version] [Priorität]
+sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-[Version] [Priorität]
+sudo update-alternatives --config gcc
+sudo update-alternatives --config g++
+```
+
+#### Version prüfen
+```bash
+gcc --version
+g++ --version
+```
+
+---
 
 #### 1.2 CUDA Toolkit
-Auch die Installation der passenden CUDA-Toolkit Version kann als Einzelversion auf dem System oder auch neben einer bestehenden CUDA-Version installiert werden.
 
-- Prüfen der CUDA-Version
-    ```shell
-    nvidia-smi                                    # Höchste unterstützte CUDA-Version
-    nvcc --version                                # Momentan genutzte CUDA-Version
-    ls /usr/local/ | grep cuda                    # Alle auf dem Rechner installierten CUDA-Versionen
-    ```
-- Download der gewünschten CUDA-Version: [CUDA Toolkit Archive](https://developer.nvidia.com/cuda-toolkit-archive)
-  - Auf der Download-Seite der gewünschten Version sollte runfile (local) als Installer Type ausgewählt werden 
-  - Aus den Instruktionen in diesem Schritt nur den Download durchführen, nicht die Installtion!
-- Gedownloadete Runfile muss executable gemacht werden
-    ```shell
-    chmod +x <name of runfile .run>
-    ```
-- Installation des Toolkit (und auch nur des Toolkit, ohne Treiber-Installation!)
-    ```shell
-    sudo ./<name of runfile .run> --silent --toolkit
-    ```
-- CUDA-Version sollte jetzt mit obigen Befehl aufgelistet werden
-  - Falls nvcc --version nicht funktionieren sollte, könnte es sein, dass CUDA nicht dem PATH hinzugefügt wurde
-    ```shell 
-    gedit .bashrc
-    
-    # Diese zwei Zeilen hinzufügen, CUDA-Version ggf. ändern
-    export PATH="/usr/local/cuda-[version]/bin:$PATH"
-    export LD_LIBRARY_PATH="/usr/local/cuda-[version]/lib64:$LD_LIBRARY_PATH"
-    
-    source .bashrc      # Oder neues Terminal
-    ```
-    
+#### Version prüfen
+```bash
+nvidia-smi                    # Unterstützte Version
+nvcc --version                # Aktive Version
+ls /usr/local/ | grep cuda    # Alle auf dem Rechner installierten CUDA-Versionen
+```
+
+#### Installation
+1. CUDA 11.8 als `.run`-Datei downloaden: [CUDA Toolkit Archive](https://developer.nvidia.com/cuda-toolkit-archive)
+2. Ausführbar machen:
+   ```bash
+   chmod +x <name of runfile .run>
+   ```
+3. Nur Toolkit installieren (ohne Treiberinstallation):
+   ```bash
+   sudo ./<name of runfile .run> --silent --toolkit
+   ```
+
+4. PATH konfigurieren:
+   ```bash
+   gedit ~/.bashrc
+   
+   # Folgendes einfügen:
+   export PATH="/usr/local/cuda-11.8/bin:$PATH"
+   export LD_LIBRARY_PATH="/usr/local/cuda-11.8/lib64:$LD_LIBRARY_PATH"
+   
+   # Datei speichern und im Terminal neu laden
+   source ~/.bashrc 
+   ```
+
 </details>
 
-### 2. Installation des Conda-Environments und aller anderen Module
+---
+
+### 2. Conda-Environment & Module  
 <details>
-<summary><span style="font-weight: bold;">Hier klicken zum Aufklappen.</span></summary>
+<summary><strong>▶️ Hier klicken zum Aufklappen</strong></summary>
 
-Die Installation aller Abhängigkeiten und Module für dieses Repo wurde in einem einzigen Installationsskript gebündelt. Wie oben beschrieben wird für die Installation CUDA 11.8 und GCC und G++ 11 benötigt.
+Alles wird über ein Skript erledigt – vorausgesetzt, CUDA v11.8 und GCC/G++ v11 sind korrekt installiert.
 
-Folgende Argumente werden für das Installationsskript akzeptiert:
-
-| Parameter             |                                                                                                                                                                       Beschreibung |
-|:----------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
-| `--no_rasterizer`     | Installation des [Gaussian Splatting Rasterizers](https://github.com/YviKiwi00/diff-gaussian-rasterization) wird übersprungen. Nur empfohlen, wenn schon gepulled und installiert. |
-| `--no_simple_knn`     |                                                                                   Installation des simple-knn Submodules wird übersprungen. Nur empfohlen, wenn schon installiert. |
-| `--no_sam`            |                                 Installation des [SAM-Algorithmus](https://github.com/facebookresearch/segment-anything) wird übersprungen. Nur empfohlen, wenn schon installiert. |
-| `--no_grounding_dino` |                             Installation des [GroundingDINO-Algorithmus](https://github.com/IDEA-Research/GroundingDINO) wird übersprungen. Nur empfohlen, wenn schon installiert. |
-| `--no_nvdiffrast`     |                             Keine Installation von [Nvdiffrast](https://nvlabs.github.io/nvdiffrast/), einem optionalem Repo für Occlusion Culling und schnellere Mesh-Extraction. |
-
-Im Root-Verzeichnis können folgende Befehle für die Installation des Environments und das Aktivieren des Environments genutzt werden.
-```shell
+```bash
 python install.py
 conda activate Great3DGSForVR
 ```
+
+Optionale Parameter:
+
+| Parameter             |                                                                                                            Beschreibung |
+|:----------------------|------------------------------------------------------------------------------------------------------------------------:|
+| `--no_rasterizer`     | Überspringt Installation des [Gaussian Splatting Rasterizers](https://github.com/YviKiwi00/diff-gaussian-rasterization) |
+| `--no_simple_knn`     |                                                                      Überspringt Installation von simple-knn Submodule. |
+| `--no_sam`            |      Überspringt Installation von [SAM](https://github.com/facebookresearch/segment-anything) (Segment Anything Model). |
+| `--no_grounding_dino` |                           Überspringt Installation von [GroundingDINO](https://github.com/IDEA-Research/GroundingDINO). |
+| `--no_nvdiffrast`     |                                        Überspringt Installation von [Nvdiffrast](https://nvlabs.github.io/nvdiffrast/). |
+
+Diese Parameter sind ausschließlich sinnvoll, wenn nur einzelne Module neuinstalliert werden sollen.
+
 </details>
 
-### 3. Troubleshooting
+---
+
+### 3. Troubleshooting  
 <details>
-<summary><span style="font-weight: bold;">Hier klicken zum Aufklappen.</span></summary>
+<summary><strong>▶️ Hier klicken zum Aufklappen</strong></summary>
 
 #### Fehlende Pakete
-Sollte während eines Jobs ein Fehler auftreten, bei dem sich über fehlende Pakete beschwert wird, kann folgender Befehl ausgeführt werden:
-```shell
+```bash
 conda env update --file environment.yml --prune
 ```
-
-Dies installiert nochmal alle Abhängigkeiten der Environment-Variable. Falls auch das nicht hilft, muss ggf. manuell nach dem benötigten Paket geschaut werden und mit pip install <package> installiert werden.
-**Beachte:** Dafür muss sich im richtigen Conda-Environment aufgehalten werden!
+Wenn nötig:
+```bash
+pip install <fehlendes-package>
+```
 
 #### Fehlende Submodules
-Das Repo besitzt verschiedene Links zu Git-Submodules.
-Sollte während des Klonens etwas schief gelaufen sein oder durch einen Branch-Wechsel nicht alle Submodules richtig gepulled sein oder sollte es in der Zwischenzeit Updates zu Submodules gegeben haben, so können diese mit folgendem Befehl im Root-Verzeichnis neu gepulled werden:
-```shell
+```bash
 git pull --recurse-submodules
 ```
+
 </details>
 
-## Starten der Anwendung
-Das Repo ist aufgebaut in einen Client und einen Server. Der Client bietet ein einfaches Frontend zum Hochladen von Bilddatensätzen und schickt Anfragen an den Server zum Durchführen der Berechnungen. Der Client kann nach Hochladen auch gestoppt werden und je nach Bedarf wieder gestartet. Dieser holt sich Informationen zum Stand der Berechnungen beim Server ab.
-Der Server sollte auf einem Rechner mit sehr guter Grafikkarte laufen. Beide Services können aber auch lokal auf dem selbem Rechner gestartet und ausgeführt werden.
+---
+
+## 🚀 Anwendung starten
 
 ### Server - Lokal
-Den Server lokal zu starten ist die einfachste Möglichkeit und benötigt keine extra SSH-Verbindung:
-```shell 
-  cd server
-  PYTHONPATH=. python server.py
+```bash
+cd server
+PYTHONPATH=. python server.py
 ```
 
 ### Server - Über SSH
-Es kann nötig sein, die Server-Seite des Repo's auf einem Rechner zu starten, der ggf. bessere Hardware hat. Kann man sich über SSH auf diesen Rechner verbinden, sind folgende Schritte zu beachten:
-
-**SSH-Verbindung mit Port-Tunnel aufbauen:**
-```shell 
-  ssh -L 5000:localhost:5000 <username>@<ssh-adress>
-```
-Die Verbindung über SSH mit einem Port-Tunnel für Port 5000 ist notwendig, damit der Client auf dem lokalen Rechner eine Verbindung zum Server über Port 5000 aufbauen kann.
-Die SSH-Verbindung kann auch ohne Tunnel gestartet werden, falls der Client nicht auf den Server zugreifen soll:
-```shell 
-  ssh <username>@<ssh-adress>
+SSH-Verbindung mit Port-Tunnel aufbauen:
+```bash
+ssh -L 5000:localhost:5000 <user>@<ssh-server>
 ```
 
-Es bietet sich an, den Server in einer Session im Hintergrund ausführen zu können, damit man nicht ständig die SSH-Verbindung aufrecht erhalten muss.
-Dafür kann bspw. tmux genutzt werden:
-
-**Server im Hintergrund starten (mit tmux):**
-```shell
-  tmux new -s great3dgsforvr_server
-  conda activate Great3DGSForVR
-  PYTHONPATH=. python server.py
+Optional mit `tmux` im Hintergrund:
+```bash
+tmux new -s great3dgsforvr_server
+conda activate Great3DGSForVR
+PYTHONPATH=. python server.py
 ```
-Zum Ausklinken aus der tmux-Sitzung, ohne den Server zu beenden: `CTRL+B` und danach `D`.
-
-Zum Einklinken in die tmux-Sitzung:
-```shell
+- **Ausklinken:** `CTRL+B`, dann `D`
+- **Wieder verbinden:**  
+  ```bash
   tmux attach -t great3dgsforvr_server
-```
-Der Server kann innerhalb der Sitzung standardmäßig mit `CTRL+C` geschlossen werden.
-
-Weitere tmux-Befehle:
-```shell
-  tmux list-sessions                    # Alle aktiven Sessions auflisten
-  tmux kill-session -t <session_id>     # Eine Session (von außerhalb) beenden
-  tmux kill-session -t <session-name>
-  tmux kill-server                      # Alle tmux-Sessions beenden
-  tmux kill-session                     # Eine Session (innerhalb) beenden
-  exit
-```
+  ```
 
 ### Client
-```shell 
-  cd client
-  PYTHONPATH=. python client.py
+```bash
+cd client
+PYTHONPATH=. python client.py
 ```
 
-Das Frontend kann über http://localhost:8000/static/html/index.html aufgerufen werden.
+👉 Das Frontend öffnen: [http://localhost:8000/static/html/index.html](http://localhost:8000/static/html/index.html)
 
-## Nutzung
-Der Client besteht aus einem einfachen HTML-Frontend mit vier Seiten: Upload, Jobs, Job-Details und How-To.
+---
 
-**TODO: README bebildern**
+## 🧪 Nutzung
+
+Das Frontend besteht aus vier Seiten: **Upload**, **Jobs**, **Job-Detail** und **How-To**.
 
 ### Upload
-Die Upload-Seite hat zum Ziel, den Bilddatensatz, der verarbeitet werden soll, hochzuladen. Dafür gibt es eine einfache Eingabemaske, in der man im File-System seine Bilder auswählen kann.
+- Bildauswahl, Vergabe des Projektnamens und Upload
+- Nur einmal auf „Upload“ klicken (unter SSH kann der Upload etwas dauern!)
+- Erfolgreicher Upload wird mit eindeutiger Job-ID aus dem Backend bestätigt
 
-**Achtung:** Es gibt momentan keinen Check, der prüft, ob die ausgewählten Dateien ein Bildformat sind.
+⚠️ Aktuell keine Dateityp-Überprüfung – bitte nur gängige Bildformate hochladen!
 
-**Hinweis:** Bei Nutzung des Servers über SSH kann der Upload durch aus ein bisschen dauern, ohne das direkt Feedback kommt. Bitte nur einmal auf den Upload-Button drücken und auf Antwort des Servers warten!
-Sowohl über Erfolg als auch Misserfolg wird im Frontend berichtet!
-
-Ist der Upload erfolgreich verlaufen, wird automatisch auf die Jobs-Seite verlinkt. Man kann allerdings auch über die Navigation manuell die Seiten wechseln.
+---
 
 ### Jobs
-Die Jobs-Seite gibt einen Überblick über die vom Server verarbeiteten Jobs, deren Projektname, ID und Status. Bei Klick auf einen der Jobs kommt man in dessen Detail-Ansicht und kann (je nach Status) mit diesem interagieren.
+- Übersicht aller gestarteten Jobs: ID, Projektname, Status
+- Klick auf einen Job → zur Detailansicht
 
-**Hinweis:** Die Job-Tabelle wird momentan nicht nach zuletzt gestartetem Job sortiert. In den allermeisten Fällen wird der Job ganz unten in der Liste sein.
+⚠️ Keine Sortierung nach Datum – neueste Jobs meist ganz unten.
+
+---
 
 ### Job-Detail
-Die Job-Detail-Seite ist wohl die interessanteste, da man hier die Server-Logs verfolgen kann und einzelne Prozesse bei Fehlschlag neustarten kann. Außerdem befindet sich hier das interaktive Punkt-Prompting für die Objektsegmentierung.
+- Status und Logs des Jobs einsehen
+- Prozesse neu starten bei Fehlern
+- **Interaktive Punktsegmentierung:**
+  - „Load Segmentation Image“ drücken
+  - Punkt setzen → 3 Vorschau-Masken
+  - Zufrieden? → „Confirm Segmentation“ starten
 
-**Hinweis:** Wurde ein Punkt-Prompt gesetzt, so sollte auf Antwort des Servers gewartet werden. Bis auf einen Alert gibt es leider keinen Hinweis auf den Fortschritt, die Segmentation-Preview sollte allerdings recht schnell durchgeführt sein.
+Ab hier startet automatisch das weitere Training inkl. Frosting.  
+Ergebnis kann anschließend heruntergeladen werden.  
+Für die **interaktive Punktsegmentierung** bitte Geduld, Feedback kann über SSH etwas dauern!
 
-Ist der Prozess soweit, dass ein Punkt als Prompt zur Segmentierung gesetzt werden kann, sollte auf den Button "Load Segmentation Image" gedrückt werden. Dieses Image ist das erste aus den vorhanden Kameransichten gerenderte Bild der Gaussian-Splatting-Szene. Mit Klick auf das Bild kann ein Punkt gesetzt werden. Der Server generiert darauf hin drei Previews der generierten Maske. Dieser Prozess kann so oft wiederholt werden wie nötig. Ist der Nutzer mit der Masken-Preview zufrieden, kann über "Confirm Segmentation" mit der tatsächlichen Segmentierung der Gaussians gestartet werden.
-
-Nach der Segmentierung läuft automatisch auch das weitere Training mit Frosting ab. Das Endergebnis kann dann über den erscheinenden Button "Download Result" heruntergeladen werden.
+---
 
 ### How-To
-How-To ist beinhaltet eine ähnliche Erklärung zum Frontend wie diese README.
 
-**TODO: How-To befüllen**
+> ❗️ Noch nicht ausgefüllt – TODO!
