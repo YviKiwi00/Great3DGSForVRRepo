@@ -21,6 +21,7 @@ Eine Anwendung zur einfachen Verarbeitung von Bilddatensätzen und Aufbereitung 
   - [Jobs](#jobs)
   - [Job-Details](#job-detail)
   - [How-To](#how-to)
+- [📊 Evaluation](#-evaluation)
 
 ---
 
@@ -238,3 +239,15 @@ Für die **interaktive Punktsegmentierung** bitte Geduld, Feedback kann über SS
 ### How-To
 
 > ❗️ Noch nicht ausgefüllt – TODO!
+
+## 📊 Evaluation
+
+Rendering des Modells mit Train- / Test-Split:
+```bash
+python render.py -m <path to trained model>
+```
+
+Evaluation durch PSNR, SSIM und LPIPS:
+```bash
+python metrics.py -m <path to trained model>
+```
