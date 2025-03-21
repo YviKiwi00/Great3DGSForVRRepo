@@ -1,4 +1,4 @@
-# 🎮 Great 3DGS for VR
+# 🌀 Great 3DGS for VR
 
 Eine Anwendung zur einfachen Verarbeitung von Bilddatensätzen und Aufbereitung dieser via 3D-Gaussian-Splatting zur einfachen Weiterverwendung in interaktiven 3D-Anwendungen.
 
