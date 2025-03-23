@@ -54,6 +54,7 @@ def frosting_whole_subprocess(job_id: str):
         "--use_occlusion_culling", use_occlusion_culling,
         "--regularization_type", regularization_type,
         "--gaussians_in_frosting", gaussians_in_frosting,
+        "--eval",
     ]
 
     jobs = load_jobs()
@@ -141,6 +142,8 @@ def frosting_seg_subprocess(job_id: str):
         "--use_occlusion_culling", use_occlusion_culling,
         "--regularization_type", regularization_type,
         "--gaussians_in_frosting", gaussians_in_frosting,
+        "--white_background",
+        "--eval",
     ]
 
     jobs = load_jobs()
