@@ -244,6 +244,7 @@ Für die **interaktive Punktsegmentierung** bitte Geduld, Feedback kann über SS
 
 Rendering des Modells mit Train- / Test-Split:
 ```bash
+cd server/great3dgsforvr/3dgs-mcmc/
 python render.py -m <path to trained model>
 ```
 
