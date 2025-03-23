@@ -42,6 +42,7 @@ def frosting_whole_subprocess(job_id: str):
     regularization_type = "dn_consistency"
     gaussians_in_frosting = str(frosting_gauss)
     iterations_to_load = str(mcmc_iterations)
+    eval = str(True)
 
     cmd = [
         "python", script_path,
@@ -54,7 +55,7 @@ def frosting_whole_subprocess(job_id: str):
         "--use_occlusion_culling", use_occlusion_culling,
         "--regularization_type", regularization_type,
         "--gaussians_in_frosting", gaussians_in_frosting,
-        "--eval",
+        "--eval", eval,
     ]
 
     jobs = load_jobs()
@@ -130,6 +131,7 @@ def frosting_seg_subprocess(job_id: str):
     regularization_type = "dn_consistency"
     gaussians_in_frosting = str(frosting_gauss)
     iterations_to_load = str(mcmc_iterations)
+    eval = str(True)
 
     cmd = [
         "python", script_path,
@@ -142,8 +144,8 @@ def frosting_seg_subprocess(job_id: str):
         "--use_occlusion_culling", use_occlusion_culling,
         "--regularization_type", regularization_type,
         "--gaussians_in_frosting", gaussians_in_frosting,
+        "--eval", eval,
         "--white_background",
-        "--eval",
     ]
 
     jobs = load_jobs()
