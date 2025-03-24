@@ -75,8 +75,11 @@ def evaluate(model_paths):
                 lpipss = []
 
                 for idx in tqdm(range(len(renders)), desc="Metric evaluation progress"):
-                    psnrs.append(peak_signal_noise_ratio(gts[idx], renders[idx]))
-                    ssims.append(structural_similarity(gts[idx], renders[idx]))
+                    gt_np = gts[idx].cpu().numpy().transpose(1, 2, 0)
+                    render_np = renders[idx].cpu().numpy().transpose(1, 2, 0)
+
+                    psnrs.append(peak_signal_noise_ratio(gt_np, render_np, data_range=1.0))
+                    ssims.append(structural_similarity(gt_np, render_np, channel_axis=-1))
 
                     gt_tensor = torch.tensor(gts[idx]).permute(2, 0, 1).unsqueeze(0).float() * 2 - 1
                     render_tensor = torch.tensor(renders[idx]).permute(2, 0, 1).unsqueeze(0).float() * 2 - 1
