@@ -81,8 +81,13 @@ def evaluate(model_paths):
                     psnrs.append(peak_signal_noise_ratio(gt_np, render_np, data_range=1.0))
                     ssims.append(structural_similarity(gt_np, render_np, channel_axis=-1, data_range=1.0))
 
-                    gt_tensor = torch.tensor(gts[idx]).permute(2, 0, 1).unsqueeze(0).float() * 2 - 1
-                    render_tensor = torch.tensor(renders[idx]).permute(2, 0, 1).unsqueeze(0).float() * 2 - 1
+                    if gts[idx].shape != renders[idx].shape:
+                        print(
+                            f"Skipping LPIPS for {image_names[idx]} due to shape mismatch: {gts[idx].shape} vs {renders[idx].shape}")
+                        continue
+
+                    gt_tensor = gts[idx].unsqueeze(0) * 2 - 1
+                    render_tensor = renders[idx].unsqueeze(0) * 2 - 1
 
                     lpipss.append(lpips_model(gt_tensor, render_tensor).item())
 
