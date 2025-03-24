@@ -79,7 +79,7 @@ def evaluate(model_paths):
                     render_np = renders[idx].cpu().numpy().transpose(1, 2, 0)
 
                     psnrs.append(peak_signal_noise_ratio(gt_np, render_np, data_range=1.0))
-                    ssims.append(structural_similarity(gt_np, render_np, channel_axis=-1))
+                    ssims.append(structural_similarity(gt_np, render_np, channel_axis=-1, data_range=1.0))
 
                     gt_tensor = torch.tensor(gts[idx]).permute(2, 0, 1).unsqueeze(0).float() * 2 - 1
                     render_tensor = torch.tensor(renders[idx]).permute(2, 0, 1).unsqueeze(0).float() * 2 - 1
