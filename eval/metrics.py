@@ -30,8 +30,6 @@ def readImages(renders_dir, gt_dir):
     gts = []
     image_names = []
     for fname in os.listdir(renders_dir):
-        if not fname.is_file():
-            continue
         render = Image.open(renders_dir / fname)
         renders.append(tf.to_tensor(render)[:3, :, :].cuda())
 
