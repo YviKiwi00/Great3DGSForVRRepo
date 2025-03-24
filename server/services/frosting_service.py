@@ -131,6 +131,7 @@ def frosting_seg_subprocess(job_id: str):
     regularization_type = "dn_consistency"
     gaussians_in_frosting = str(frosting_gauss)
     iterations_to_load = str(mcmc_iterations)
+    white_background = str(True)
     eval = str(True)
 
     cmd = [
@@ -145,7 +146,7 @@ def frosting_seg_subprocess(job_id: str):
         "--regularization_type", regularization_type,
         "--gaussians_in_frosting", gaussians_in_frosting,
         "--eval", eval,
-        "--white_background",
+        "--white_background", white_background,
     ]
 
     jobs = load_jobs()
