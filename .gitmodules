@@ -7,3 +7,6 @@
 [submodule "server/great3dgsforvr/Frosting"]
 	path = server/great3dgsforvr/Frosting
 	url = https://github.com/YviKiwi00/Frosting.git
+[submodule "server/great3dgsforvr/gaussian_splatting_fork"]
+	path = server/great3dgsforvr/gaussian_splatting_fork
+	url = https://github.com/YviKiwi00/gaussian_splatting_fork.git

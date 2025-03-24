@@ -20,7 +20,13 @@ def run_mcmc(job_id: str):
     return {"job_id": job_id, "status": jobs[job_id]["status"]}
 
 def mcmc_subprocess(job_id: str):
-    script_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "great3dgsforvr", "3dgs-mcmc"))
+    mcmc_iterations, mcmc_cap_max, _, use_3dgs = get_exp_values()
+
+    if use_3dgs == "True":
+        script_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "great3dgsforvr", "gaussian_splatting_fork"))
+    else:
+        script_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "great3dgsforvr", "3dgs-mcmc"))
+
     script_path = os.path.join(script_dir, "train.py")
 
     env = os.environ.copy()
@@ -29,8 +35,6 @@ def mcmc_subprocess(job_id: str):
     source_path = os.path.join(UPLOAD_DIR, f"{job_id}")
     output_path = os.path.join(RESULTS_DIR, f"{job_id}")
 
-    mcmc_iterations, mcmc_cap_max, _ = get_exp_values()
-
     iterations = str(mcmc_iterations)
     cap_max = str(mcmc_cap_max)
     scale_reg = str(0.01)
@@ -38,23 +42,31 @@ def mcmc_subprocess(job_id: str):
     noise_lr = str(5e5)
     init_type = "random"
 
-    cmd = [
-        "python", script_path,
-        "--source_path", source_path,
-        "--model_path", output_path,
-        "--iterations", iterations,
-        "--cap_max", cap_max,
-        "--scale_reg", scale_reg,
-        "--opacity_reg", opacity_reg,
-        "--noise_lr", noise_lr,
-        "--init_type", init_type,
-    ]
+    if use_3dgs == "True":
+        cmd = [
+            "python", script_path,
+            "--source_path", source_path,
+            "--model_path", output_path,
+            "--iterations", iterations,
+        ]
+    else:
+        cmd = [
+            "python", script_path,
+            "--source_path", source_path,
+            "--model_path", output_path,
+            "--iterations", iterations,
+            "--cap_max", cap_max,
+            "--scale_reg", scale_reg,
+            "--opacity_reg", opacity_reg,
+            "--noise_lr", noise_lr,
+            "--init_type", init_type,
+        ]
 
     jobs = load_jobs()
     jobs[job_id]["status"] = "running_mcmc"
     save_jobs(jobs)
 
-    log_file_and_console(job_id, f"========== Starting first 7000 Iterations of 3DGS-MCMC Training for Job {job_id} ==========\n")
+    log_file_and_console(job_id, f"========== Starting first Iterations of 3DGS-MCMC Training for Job {job_id} ==========\n")
 
     start_time = datetime.now()
     log_file_and_console(job_id, f"===== Start-Time: {start_time} =====\n")

@@ -189,3 +189,4 @@ server/storage
 server/great3dgsforvr/submodules/diff-gaussian-rasterization
 server/great3dgsforvr/submodules/simple-knn/build
 server/great3dgsforvr/submodules/simple-knn/simple_knn.egg-info
+server/exp_cfgs.json

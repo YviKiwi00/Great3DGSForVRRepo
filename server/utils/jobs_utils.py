@@ -18,6 +18,7 @@ EXP_FILE = os.path.join("exp_cfgs.json")
 EXP_MCMC_ITERATIONS = 12_000      # Baseline is 12_000
 EXP_MCMC_CAPMAX = 6_000_000      # Baseline is 6_000_000
 EXP_FROSTING_GAUSS = 2_000_000   # Baseline is 2_000_000
+EXP_3DGS_ABL = str(True)
 
 def encode_image_as_base64(filepath):
     with open(filepath, "rb") as f:
@@ -32,7 +33,7 @@ def get_exp_values():
             except json.decoder.JSONDecodeError:
                 print("No exp_cfgs.json, returning empty json.")
 
-    return cfg_data.get("mcmc_iterations", EXP_MCMC_ITERATIONS), cfg_data.get("mcmc_capMax", EXP_MCMC_CAPMAX), cfg_data.get("frosting_gauss", EXP_FROSTING_GAUSS)
+    return cfg_data.get("mcmc_iterations", EXP_MCMC_ITERATIONS), cfg_data.get("mcmc_capMax", EXP_MCMC_CAPMAX), cfg_data.get("frosting_gauss", EXP_FROSTING_GAUSS), cfg_data.get("3dgs_abl", EXP_3DGS_ABL)
 
 def wait_for_job_status(job_id, api_base, target_status, timeout=14400): # 4 Stunden
     start_time = time.time()
