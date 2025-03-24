@@ -21,15 +21,17 @@ import skimage.metrics
 from skimage.metrics import peak_signal_noise_ratio
 from skimage.metrics import structural_similarity
 import lpips
+import traceback
 
 lpips_model = lpips.LPIPS(net='vgg').to('cuda')
-
 
 def readImages(renders_dir, gt_dir):
     renders = []
     gts = []
     image_names = []
     for fname in os.listdir(renders_dir):
+        if not fname.is_file():
+            continue
         render = Image.open(renders_dir / fname)
         renders.append(tf.to_tensor(render)[:3, :, :].cuda())
 
@@ -102,6 +104,7 @@ def evaluate(model_paths):
                 json.dump(per_view_dict[scene_dir], fp, indent=True)
         except:
             print("Unable to compute metrics for model", scene_dir)
+            traceback.print_exc()
 
 
 if __name__ == "__main__":
