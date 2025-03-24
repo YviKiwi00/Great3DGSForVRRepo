@@ -1,5 +1,5 @@
 {
-    "mcmc_iterations": 7000,
-    "mcmc_capMax": 6000000,
+    "mcmc_iterations": 12000,
+    "mcmc_capMax": 2000000,
     "frosting_gauss": 2000000
 }
