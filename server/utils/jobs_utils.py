@@ -18,7 +18,7 @@ EXP_FILE = os.path.join("exp_cfgs.json")
 EXP_MCMC_ITERATIONS = 12_000      # Baseline is 12_000
 EXP_MCMC_CAPMAX = 6_000_000      # Baseline is 6_000_000
 EXP_FROSTING_GAUSS = 2_000_000   # Baseline is 2_000_000
-EXP_3DGS_ABL = str(True)
+EXP_3DGS_ABL = str(False)
 
 def encode_image_as_base64(filepath):
     with open(filepath, "rb") as f:
