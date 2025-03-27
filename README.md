@@ -153,7 +153,7 @@ conda env update --file environment.yml --prune
 ```
 Wenn nötig:
 ```bash
-pip install <fehlendes-package>
+pip install <missing packages>
 ```
 
 #### Fehlende Submodules
@@ -245,10 +245,12 @@ Für die **interaktive Punktsegmentierung** bitte Geduld, Feedback kann über SS
 Rendering des Modells mit Train- / Test-Split:
 ```bash
 cd server/great3dgsforvr/3dgs-mcmc/
-python render.py -m <path to trained model>
+python render.py -m <path to trained model> [--white_background] [--skip_test]
 ```
 
-Evaluation durch PSNR, SSIM und LPIPS:
+Evaluation mit PSNR, SSIM und LPIPS:
 ```bash
-python metrics.py -m <path to trained model>
+python metrics.py -m <paths to trained models (separated by a space)>
 ```
+
+Die Experimente aus der Arbeit wurden auf allen Ansichten (`--skip_test`) durchgeführt. Für die segmentierten Ansichten wurde mit `--white_background` gerendert.
