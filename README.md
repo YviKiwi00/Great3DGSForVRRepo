@@ -203,7 +203,7 @@ PYTHONPATH=. python client.py
 
 ## 🧪 Nutzung
 
-Das Frontend besteht aus vier Seiten: **Upload**, **Jobs**, **Job-Detail** und **How-To**.
+Das Frontend besteht aus drei Seiten: **Upload**, **Jobs** und **Job-Detail**.
 
 ### Upload
 - Bildauswahl, Vergabe des Projektnamens und Upload
