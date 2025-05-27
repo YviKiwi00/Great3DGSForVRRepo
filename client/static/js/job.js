@@ -13,58 +13,60 @@ function pollJobDetails(jobId) {
         const response = await fetch(`/jobs/${jobId}`);
         const job = await response.json();
 
-        switch (true) {
-            case job.status.includes('done_colmap'):
-                updateButtons(true, true, false, false, false, false)
-                break;
-            case job.status.includes('done_mcmc'):
-                updateButtons(true, true, true, false, false, false)
-                break;
-            case job.status.includes('done_segmentation_preparation'):
-                updateButtons(true, true, true, true, false, false)
-                break;
-            case job.status.includes('done_gaussian_segmentation'):
-                updateButtons(true, true, true, true, true, false)
-                break;
-            case job.status.includes('done_frosting'):
-                updateButtons(true, true, true, true, true, true)
-                break;
-            case job.status.includes('failed_colmap'):
-                updateButtons(true, false, false, false, false, false)
-                clearSegmentationContainer()
-                break;
-            case job.status.includes('failed_mcmc'):
-                updateButtons(true, true, false, false, false, false)
-                clearSegmentationContainer()
-                break;
-            case job.status.includes('failed_segmentation_preparation'):
-                updateButtons(true, true, true, false, false, false)
-                clearSegmentationContainer()
-                break;
-            case job.status.includes('failed_gaussian_segmentation'):
-                updateButtons(true, true, true, true, false, false)
-                clearSegmentationContainer()
-                break;
-            case job.status.includes('failed_frosting'):
-                updateButtons(true, true, true, true, true, false)
-                clearSegmentationContainer()
-                break;
-            case job.status.includes('running'):
-                updateButtons(false, false, false, false, false, false)
-                clearSegmentationContainer()
-                break;
-            case job.status.includes('failed'):
-                updateButtons(true, true, true, true, true, true)
-                clearSegmentationContainer()
-                break;
-            case job.status.includes('removed_job_queue'):
-                updateButtons(true, true, true, true, true, true)
-                clearSegmentationContainer()
-                break;
-            case job.status.includes('job_queued'):
-                clearSegmentationContainer()
-                break;
-        }
+        updateButtons(true, true, true, true, true, true)
+
+        // switch (true) {
+        //     case job.status.includes('done_colmap'):
+        //         updateButtons(true, true, false, false, false, false)
+        //         break;
+        //     case job.status.includes('done_mcmc'):
+        //         updateButtons(true, true, true, false, false, false)
+        //         break;
+        //     case job.status.includes('done_segmentation_preparation'):
+        //         updateButtons(true, true, true, true, false, false)
+        //         break;
+        //     case job.status.includes('done_gaussian_segmentation'):
+        //         updateButtons(true, true, true, true, true, false)
+        //         break;
+        //     case job.status.includes('done_frosting'):
+        //         updateButtons(true, true, true, true, true, true)
+        //         break;
+        //     case job.status.includes('failed_colmap'):
+        //         updateButtons(true, false, false, false, false, false)
+        //         clearSegmentationContainer()
+        //         break;
+        //     case job.status.includes('failed_mcmc'):
+        //         updateButtons(true, true, false, false, false, false)
+        //         clearSegmentationContainer()
+        //         break;
+        //     case job.status.includes('failed_segmentation_preparation'):
+        //         updateButtons(true, true, true, false, false, false)
+        //         clearSegmentationContainer()
+        //         break;
+        //     case job.status.includes('failed_gaussian_segmentation'):
+        //         updateButtons(true, true, true, true, false, false)
+        //         clearSegmentationContainer()
+        //         break;
+        //     case job.status.includes('failed_frosting'):
+        //         updateButtons(true, true, true, true, true, false)
+        //         clearSegmentationContainer()
+        //         break;
+        //     case job.status.includes('running'):
+        //         updateButtons(false, false, false, false, false, false)
+        //         clearSegmentationContainer()
+        //         break;
+        //     case job.status.includes('failed'):
+        //         updateButtons(true, true, true, true, true, true)
+        //         clearSegmentationContainer()
+        //         break;
+        //     case job.status.includes('removed_job_queue'):
+        //         updateButtons(true, true, true, true, true, true)
+        //         clearSegmentationContainer()
+        //         break;
+        //     case job.status.includes('job_queued'):
+        //         clearSegmentationContainer()
+        //         break;
+        // }
 
         jobInfo.innerHTML = `
             <p><strong>Job-ID:</strong> ${job.id}</p>
